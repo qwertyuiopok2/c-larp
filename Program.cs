@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http.Headers;
 namespace c_larp;
 
     class Program
@@ -39,49 +40,30 @@ namespace c_larp;
     }
     // hotkey alt + нижняя стрелочка перенос выделенной строки через стрелочки вверх вниз
                     int result = 0; // hotkey crtl + alt  и стрелочки перенос выделенной строки через стрелочки вверх вниз
-                    switch (op)
-                    {
-                        case "+": result = num1 + num2; break;
-                        case "*": result = num1 * num2; break;
-                        case "-": result = num1 - num2; break;
-                        case "/": 
-                        if (num2 == 0)
-                        {
-                            Console.WriteLine("ошибка на 0 делить нельзя");
-                            Console.ReadKey();
-                            continue; 
-                        }
-                        result = num1 / num2; break;
-            
-                    }
+                   result = Bander(num1, num2, op);
+
+                 
 
     Console.WriteLine($"у нас получилось: {result}");
     Console.WriteLine($"нажмите любую кнопку");
     Console.ReadKey();
    }
    }
-            // if (op == "+")
-            // {
+   static int Bander(int a, int b, string? op)
+   {
+        int result = 0;
+        switch (op)
+        {
+            case "+": result = a + b; break;
+            case "-": result = a - b; break;
+            case "*": result = a * b; break;
+            case "/":
+            if (b != 0) result = a / b; break;
 
-            // result = num1 + num2;
-
-            // }
-            // else if (op == "-")
-            // {
-
-            // result = num1 - num2;
-
-            // }
-            // else if (op == "*")
-            // {
-
-            // result = num1 * num2;
-
-            // }
-            // else if (op == "/")
-            // {
-
-            // result = num1 / num2;
-
-            // }
+        }
+        return result;
    }
+
+   }
+
+             
