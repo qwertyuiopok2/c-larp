@@ -31,41 +31,57 @@ namespace c_larp;
     
     if (int.TryParse(input2, out int num2) == false)
     {
-        Console.WriteLine("ошибка - текст не является числом. Попробуйте снова.")
+        Console.WriteLine("ошибка - текст не является числом. Попробуйте снова.");
         Console.ReadKey();
 
         continue;
 
     }
-                    int result = 0;
-            if (op == "+")
-            {
-
-            result = num1 + num2;
-
-            }
-            else if (op == "-")
-            {
-
-            result = num1 - num2;
-
-            }
-            else if (op == "*")
-            {
-
-            result = num1 * num2;
-
-            }
-            else if (op == "/")
-            {
-
-            result = num1 / num2;
-
-            }
+    // hotkey alt + нижняя стрелочка перенос выделенной строки через стрелочки вверх вниз
+                    int result = 0; // hotkey crtl + alt  и стрелочки перенос выделенной строки через стрелочки вверх вниз
+                    switch (op)
+                    {
+                        case "+": result = num1 + num2; break;
+                        case "*": result = num1 * num2; break;
+                        case "-": result = num1 - num2; break;
+                        case "/": 
+                        if (num2 == 0)
+                        {
+                            Console.WriteLine("ошибка на 0 делить нельзя");
+                            Console.ReadKey();
+                            continue; 
+                        }
+                        result = num1 / num2; break;
+            
+                    }
 
     Console.WriteLine($"у нас получилось: {result}");
     Console.WriteLine($"нажмите любую кнопку");
     Console.ReadKey();
    }
    }
+            // if (op == "+")
+            // {
+
+            // result = num1 + num2;
+
+            // }
+            // else if (op == "-")
+            // {
+
+            // result = num1 - num2;
+
+            // }
+            // else if (op == "*")
+            // {
+
+            // result = num1 * num2;
+
+            // }
+            // else if (op == "/")
+            // {
+
+            // result = num1 / num2;
+
+            // }
    }
