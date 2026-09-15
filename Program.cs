@@ -11,43 +11,26 @@ namespace c_larp;
    {     
         static void  Main (string[] args)
         {
-        int[] num = {90, 185, 20, 40, 10};
-        
-        Console.WriteLine("оригинальный массив");
-        Pudge(num);
+            double[] usnum = new double[3];
+            Console.WriteLine("ЗАПОЛНЕНИЕ МАССИВА");
 
-        Console.WriteLine("отсортированный метод");
-        Sortpudge(num);
-        Pudge(num);
-        }
-
-
-        static void Pudge(int[] lox)
-        {
-            for (int i = 0; i < lox.Length; i++)
+                for (int i = 0; i < usnum.Length; i++)
             {
+                Console.WriteLine("ВВЕДИТЕ ЧИСЛО ДЛЯ ЗАПОЛНЕНИЯ");
+                string? inp1 = Console.ReadLine() ?? "";
 
-                Console.WriteLine(lox[i] + "");
-
-            }
-            Console.WriteLine("");
-        }
-        
-
-        static void Sortpudge(int[] lox)
-        {
-            for (int p = 0; p < lox.Length; p++)
-            {
-                for (int i = 0; i < lox.Length - 1; i++)
+                if (double.TryParse(inp1, CultureInfo.InvariantCulture, out usnum[i]) == false)
                 {
-                    if (lox[i]> lox[i + 1])
-                    {
-                        int temp = lox[i];
-                        lox[i] = lox[i + 1];
-                        lox[1 + i] = temp;
-                    }
+                    Console.WriteLine("Ошбика - Текст не является числом");
+                    Console.ReadKey();
+                    continue;
                 }
-            }
+            }    
+            Console.WriteLine("Вывод результата");
+                for (int i = 0; i < usnum.Length; i++)
+                {
+                    Console.WriteLine($"под индексом {i} лежит {usnum[i]}");
+                }
         }
    }
 
