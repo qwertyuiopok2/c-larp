@@ -1,5 +1,8 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Security.Authentication;
 namespace c_larp;
 
     class Program
@@ -11,7 +14,7 @@ namespace c_larp;
       Console.WriteLine("Введите первое число: ");
       string? input = Console.ReadLine(); //Считывает что ввели на клавиатуре
 
-      if (int.TryParse(input, out int num1) == false) // условие для перевода ищ текста в число, при вводе буквы ошибка (==false), out int создание переменной на лету
+      if (double.TryParse(input, CultureInfo.InvariantCulture, out double num1) == false) // условие для перевода ищ текста в число, при вводе буквы ошибка (==false), out int создание переменной на лету
     {
         
         Console.WriteLine("ошибка - текст не является числом. Попробуйте снова.");
@@ -30,7 +33,7 @@ namespace c_larp;
     Console.WriteLine("Введите второе число: ");
     string? input2 = Console.ReadLine();
     
-    if (int.TryParse(input2, out int num2) == false)
+    if (double.TryParse(input2, CultureInfo.InvariantCulture, out double num2) == false)
     {
         Console.WriteLine("ошибка - текст не является числом. Попробуйте снова.");
         Console.ReadKey();
@@ -38,21 +41,59 @@ namespace c_larp;
         continue;
 
     }
+
+
+double result = 0;
+double finalresult = 0; // hotkey crtl + alt  и стрелочки перенос выделенной строки через стрелочки вверх вниз
+
+result = Bander(num1, num2 ,op);
+
+
+
+
+    if (op == "/" && num2 == 0 )      
+    {
+        Console.WriteLine("на 0 нельзя делить");
+        Console.ReadKey();
+
+        continue;
+    }       
+    Console.WriteLine("введите второй математический знак /, +, -, *, exit- для выхода с программы");
+    string? op2 = Console.ReadLine();
+    if (op2 == "exit")
+    {
+        break;
+    }
+
+    Console.WriteLine("введите третье число");
+    string? number3 = Console.ReadLine();
+
+    if (double.TryParse(number3, CultureInfo.InvariantCulture, out double num3) == false)
+    {
+        Console.WriteLine("ошибка - текст не является числом");
+        Console.ReadKey();
+        continue;
+       
+    }
+     if (num3 == 0 && op2 == "/")
+        {
+            Console.WriteLine("на 0 делить нельзя");
+            Console.ReadKey();
+            continue;
+        }
+
     // hotkey alt + нижняя стрелочка перенос выделенной строки через стрелочки вверх вниз
-                    int result = 0; // hotkey crtl + alt  и стрелочки перенос выделенной строки через стрелочки вверх вниз
-                   result = Bander(num1, num2, op);
+                   finalresult = Bander(result, num3, op2); // вызов изолированого метода
 
-                 
-
-    Console.WriteLine($"у нас получилось: {result}");
+    Console.WriteLine($"у нас получилось: {finalresult}");
     Console.WriteLine($"нажмите любую кнопку");
     Console.ReadKey();
    }
    }
-   static int Bander(int a, int b, string? op)
+   static double Bander(double a, double b, string? op) //сделал изолированый метод
    {
-        int result = 0;
-        switch (op)
+        double result = 0;
+        switch (op) // сделал код компактнее, знакомство с оператором свитч и его частью кейс (также был дефолт)
         {
             case "+": result = a + b; break;
             case "-": result = a - b; break;
