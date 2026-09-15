@@ -1,6 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net.Http.Headers;
+using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
 namespace c_larp;
@@ -9,102 +11,44 @@ namespace c_larp;
    {     
         static void  Main (string[] args)
         {
-        while(true) // калькулятор не надо постоянно запускать
-    {
-      Console.WriteLine("Введите первое число: ");
-      string? input = Console.ReadLine(); //Считывает что ввели на клавиатуре
-
-      if (double.TryParse(input, CultureInfo.InvariantCulture, out double num1) == false) // условие для перевода ищ текста в число, при вводе буквы ошибка (==false), out int создание переменной на лету
-    {
+        int[] num = {90, 185, 20, 40, 10};
         
-        Console.WriteLine("ошибка - текст не является числом. Попробуйте снова.");
-        Console.ReadKey(); //  ждем нажатия кнопки возращаем принудельно в начало цикла while
+        Console.WriteLine("оригинальный массив");
+        Pudge(num);
 
-        continue;  //  принудительный возврат программы в начало цикла while
-    
-    }
-    Console.WriteLine("введите математический знак:(+, -, *, /, exit) ");
-    string? op = Console.ReadLine();
-    if (op == "exit")
-    {
-        break;
-
-    }
-    Console.WriteLine("Введите второе число: ");
-    string? input2 = Console.ReadLine();
-    
-    if (double.TryParse(input2, CultureInfo.InvariantCulture, out double num2) == false)
-    {
-        Console.WriteLine("ошибка - текст не является числом. Попробуйте снова.");
-        Console.ReadKey();
-
-        continue;
-
-    }
-
-
-double result = 0;
-double finalresult = 0; // hotkey crtl + alt  и стрелочки перенос выделенной строки через стрелочки вверх вниз
-
-result = Bander(num1, num2 ,op);
-
-
-
-
-    if (op == "/" && num2 == 0 )      
-    {
-        Console.WriteLine("на 0 нельзя делить");
-        Console.ReadKey();
-
-        continue;
-    }       
-    Console.WriteLine("введите второй математический знак /, +, -, *, exit- для выхода с программы");
-    string? op2 = Console.ReadLine();
-    if (op2 == "exit")
-    {
-        break;
-    }
-
-    Console.WriteLine("введите третье число");
-    string? number3 = Console.ReadLine();
-
-    if (double.TryParse(number3, CultureInfo.InvariantCulture, out double num3) == false)
-    {
-        Console.WriteLine("ошибка - текст не является числом");
-        Console.ReadKey();
-        continue;
-       
-    }
-     if (num3 == 0 && op2 == "/")
-        {
-            Console.WriteLine("на 0 делить нельзя");
-            Console.ReadKey();
-            continue;
+        Console.WriteLine("отсортированный метод");
+        Sortpudge(num);
+        Pudge(num);
         }
 
-    // hotkey alt + нижняя стрелочка перенос выделенной строки через стрелочки вверх вниз
-                   finalresult = Bander(result, num3, op2); // вызов изолированого метода
 
-    Console.WriteLine($"у нас получилось: {finalresult}");
-    Console.WriteLine($"нажмите любую кнопку");
-    Console.ReadKey();
-   }
-   }
-   static double Bander(double a, double b, string? op) //сделал изолированый метод
-   {
-        double result = 0;
-        switch (op) // сделал код компактнее, знакомство с оператором свитч и его частью кейс (также был дефолт)
+        static void Pudge(int[] lox)
         {
-            case "+": result = a + b; break;
-            case "-": result = a - b; break;
-            case "*": result = a * b; break;
-            case "/":
-            if (b != 0) result = a / b; break;
+            for (int i = 0; i < lox.Length; i++)
+            {
 
+                Console.WriteLine(lox[i] + "");
+
+            }
+            Console.WriteLine("");
         }
-        return result;
-   }
+        
 
+        static void Sortpudge(int[] lox)
+        {
+            for (int p = 0; p < lox.Length; p++)
+            {
+                for (int i = 0; i < lox.Length - 1; i++)
+                {
+                    if (lox[i]> lox[i + 1])
+                    {
+                        int temp = lox[i];
+                        lox[i] = lox[i + 1];
+                        lox[1 + i] = temp;
+                    }
+                }
+            }
+        }
    }
 
              
