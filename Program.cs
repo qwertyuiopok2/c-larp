@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net.Http.Headers;
+using System.Net.NetworkInformation;
+using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
@@ -11,27 +13,83 @@ namespace c_larp;
    {     
         static void  Main (string[] args)
         {
-            double[] usnum = new double[3];
-            Console.WriteLine("ЗАПОЛНЕНИЕ МАССИВА");
+            string?[] Invent = new string[3];
+            Invent[1] = "меч новичка";
 
-                for (int i = 0; i < usnum.Length; i++)
+            while (true)
             {
-                Console.WriteLine("ВВЕДИТЕ ЧИСЛО ДЛЯ ЗАПОЛНЕНИЯ");
-                string? inp1 = Console.ReadLine() ?? "";
+                Console.Clear();
+                Console.WriteLine ("ваш инвентарь");
 
-                if (double.TryParse(inp1, CultureInfo.InvariantCulture, out usnum[i]) == false)
+                for (int i = 0 ; i < Invent.Length; i++)
                 {
-                    Console.WriteLine("Ошбика - Текст не является числом");
-                    Console.ReadKey();
-                    continue;
+                    if (Invent == null)
+                    {
+                        Console.WriteLine("В ячейке пусто");
+                    }
+                    else 
+                    {
+                        Console.WriteLine($"В слоте {i}, {Invent[i]} ");
+                    }
+
                 }
-            }    
-            Console.WriteLine("Вывод результата");
-                for (int i = 0; i < usnum.Length; i++)
+            bool isFull = true;
+            Console.WriteLine("Введите название нового предмета для добавления в инвентарь");
+            string? newitem = Console.ReadLine();
+            if (newitem == "")
+            {
+                Console.WriteLine("ошибка");
+                Console.ReadKey();
+                continue;
+            }
+            for (int i = 0 ; i < Invent.Length; i++)
+              {
+                if (Invent[i] == null ) 
                 {
-                    Console.WriteLine($"под индексом {i} лежит {usnum[i]}");
+                    Invent[i] = newitem;
+                    Console.WriteLine($"предмет {Invent[i]} добавлен");
+                    isFull = false;
+                    break;
                 }
+              }
+                if (isFull == false)
+                {
+                    Console.WriteLine("введите y для очистки инвенторя или n для отмены");
+                    string? lox = Console.ReadLine();
+                    if (lox == "y")
+                    {
+                        Invent[0] = null;
+                        Invent[2] = null;
+                        
+                    }
+                 
+                    else if (lox == "n")
+                    {
+                        Console.WriteLine("отмена очистки инвенторя");
+                        
+                    }
+                    else
+                    {
+                        Console.WriteLine("ошибка нажмите кнопку чтобы остановить программу");
+                        Console.ReadKey();
+                        break;
+                    }
+            
+                    
+
+                }
+
+            if (Invent[0] != null && Invent[2] != null)
+            {
+                break;
+            }
+              }
+
+            }
+
+        
+      
         }
-   }
+   
 
              
