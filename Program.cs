@@ -9,79 +9,44 @@ using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
+using Microsoft.VisualBasic;
 namespace c_larp;
 
     class Program
    {     
         static void  Main (string[] args)
         {
-            
-            Console.WriteLine("\n Бэкенд серверной логики");
-            int[] serv = [12, 45, 5, 90, 23, 150, 4];
-            int sum = 0;
+          List<string> names = new List<string>(); // создал динамический массив 
+            names.Add("ALEX");// 0 
+            names.Add("SANYA"); // names.Add("") - заполяет данные в динамический массив
+            names.Add("ARTEM");
+            names.Add("bear");
+            names.Add("pill");
+            names.Add("FLEX");
+            names.Add("lox");
+            names.Add("candy");
+            names.Add("milk");
+            names.Add("tank");
+            names.Add("zero");//10
 
-            Console.WriteLine($"\n ошибки дневного массива по часам");
-            PrintArray(serv);
-
-            foreach (int num in serv)
+            for (int i = 0; i < names.Count; i++)
             {
-               sum += num;
-            }
-            Console.WriteLine($"Колчество ошибок в этом дне {sum}");
-
-            BackEndSort(serv);
-            Console.WriteLine();
-            
-
-            Sortirovka(serv);
-            Sortirovmassiv(serv);
-            
-        }    
-
-        static void PrintArray (int[] lox)
-        {
-            for (int i = 0; i < lox.Length; i++ )
-            {
-                Console.WriteLine($"в {i} часу {lox[i]} ошибок");
-            }
-            Console.WriteLine("");
-        }
-
-        static void BackEndSort (int[] lox)
-        {
-            Console.WriteLine("\n вывод часа в котором больше 50 ошибок");
-            for (int i = 0; i < lox.Length; i++)
-            {
-                if (lox[i] > 50)
+                for (int p = 0; p < names.Count - 1 - i; p++) // страшно
                 {
-                    Console.WriteLine($"В часу {i} выявленно {lox[i]} ошибок и оно больше 50");
-                }
-            }
-        }
-        static void Sortirovka (int [] lox)
-        {
-            for (int i = 0; i < lox.Length; i++)
-            {
-                for (int p = 0; p < lox.Length - 1;  p++)
-                {
-                    if (lox[p] > lox[p + 1])
+                    if ((names[p]).CompareTo(names[p+1]) <0)
                     {
-                        int temp = lox[p];
-                        lox[p] = lox[p + 1];
-                        lox[p + 1] = temp;
+                        string temp = names[p];
+                        names[p] = names[p+1];
+                        names[p+1] = temp;
                     }
                 }
             }
-        }
-        static void Sortirovmassiv (int[] lox)
-        {
-            Console.WriteLine("Отсортированный вариант дневного массива ошибок");
-            foreach (int errors in lox) //фор ич оператор позволяющий работать сразу всеми данными массива
+            foreach (string name in names)
             {
-                Console.WriteLine($"{errors}");
+                Console.WriteLine($" {name}");
             }
         }
-    }
+   }
 
    
              
