@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
+using System.Net.Security;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
@@ -13,83 +14,43 @@ namespace c_larp;
    {     
         static void  Main (string[] args)
         {
-            string?[] Invent = new string[3];
-            Invent[1] = "меч новичка";
-
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine ("ваш инвентарь");
-
-                for (int i = 0 ; i < Invent.Length; i++)
-                {
-                    if (Invent == null)
-                    {
-                        Console.WriteLine("В ячейке пусто");
-                    }
-                    else 
-                    {
-                        Console.WriteLine($"В слоте {i}, {Invent[i]} ");
-                    }
-
-                }
-            bool isFull = true;
-            Console.WriteLine("Введите название нового предмета для добавления в инвентарь");
-            string? newitem = Console.ReadLine();
-            if (newitem == "")
-            {
-                Console.WriteLine("ошибка");
-                Console.ReadKey();
-                continue;
-            }
-            for (int i = 0 ; i < Invent.Length; i++)
-              {
-                if (Invent[i] == null ) 
-                {
-                    Invent[i] = newitem;
-                    Console.WriteLine($"предмет {Invent[i]} добавлен");
-                    isFull = false;
-                    break;
-                }
-              }
-                if (isFull == false)
-                {
-                    Console.WriteLine("введите y для очистки инвенторя или n для отмены");
-                    string? lox = Console.ReadLine();
-                    if (lox == "y")
-                    {
-                        Invent[0] = null;
-                        Invent[2] = null;
-                        
-                    }
-                 
-                    else if (lox == "n")
-                    {
-                        Console.WriteLine("отмена очистки инвенторя");
-                        
-                    }
-                    else
-                    {
-                        Console.WriteLine("ошибка нажмите кнопку чтобы остановить программу");
-                        Console.ReadKey();
-                        break;
-                    }
             
-                    
+            Console.WriteLine("\n Бэкенд серверной логики");
+            int[] serv = [12, 45, 5, 90, 23, 150, 4];
+            int sum = 0;
 
-                }
+            Console.WriteLine($"\n ошибки дневного массива по часам");
+            PrintArray(serv);
 
-            if (Invent[0] != null && Invent[2] != null)
+            foreach (int num in serv)
             {
-                break;
+               sum += num;
             }
-              }
+            Console.WriteLine($"Колчество ошибок в этом дне {sum}");
 
+            BackEndSort(serv);
+        }    
+
+        static void PrintArray (int[] lox)
+        {
+            for (int i = 0; i < lox.Length; i++ )
+            {
+                Console.WriteLine($"в {i} часу {lox[i]} ошибок");
             }
-
-        
-      
+            Console.WriteLine("");
         }
-   
 
+        static void BackEndSort (int[] lox)
+        {
+            Console.WriteLine("\n вывод часа в котором больше 50 ошибок");
+            for (int i = 0; i < lox.Length; i++)
+            {
+                if (lox[i] > 50)
+                {
+                    Console.WriteLine($"В часу {i} выявленно {lox[i]} ошибок и оно больше 50");
+                }
+            }
+        }
+    }
+   
              
