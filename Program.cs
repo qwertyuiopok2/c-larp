@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net.Http.Headers;
@@ -29,6 +30,12 @@ namespace c_larp;
             Console.WriteLine($"Колчество ошибок в этом дне {sum}");
 
             BackEndSort(serv);
+            Console.WriteLine();
+            
+
+            Sortirovka(serv);
+            Sortirovmassiv(serv);
+            
         }    
 
         static void PrintArray (int[] lox)
@@ -51,6 +58,30 @@ namespace c_larp;
                 }
             }
         }
+        static void Sortirovka (int [] lox)
+        {
+            for (int i = 0; i < lox.Length; i++)
+            {
+                for (int p = 0; p < lox.Length - 1;  p++)
+                {
+                    if (lox[p] > lox[p + 1])
+                    {
+                        int temp = lox[p];
+                        lox[p] = lox[p + 1];
+                        lox[p + 1] = temp;
+                    }
+                }
+            }
+        }
+        static void Sortirovmassiv (int[] lox)
+        {
+            Console.WriteLine("Отсортированный вариант дневного массива ошибок");
+            foreach (int errors in lox) //фор ич оператор позволяющий работать сразу всеми данными массива
+            {
+                Console.WriteLine($"{errors}");
+            }
+        }
     }
+
    
              
