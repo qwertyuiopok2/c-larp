@@ -9,6 +9,7 @@ using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
+using System.Text.Json.Serialization;
 using Microsoft.VisualBasic;
 namespace c_larp;
 
@@ -16,34 +17,83 @@ namespace c_larp;
    {     
         static void  Main (string[] args)
         {
-          List<string> names = new List<string>(); // создал динамический массив 
-            names.Add("ALEX");// 0 
-            names.Add("SANYA"); // names.Add("") - заполяет данные в динамический массив
-            names.Add("ARTEM");
-            names.Add("bear");
-            names.Add("pill");
-            names.Add("FLEX");
-            names.Add("lox");
-            names.Add("candy");
-            names.Add("milk");
-            names.Add("tank");
-            names.Add("zero");//10
-
-            for (int i = 0; i < names.Count; i++)
+          
+          List<string> names = new List<string>();
+          names.Add("Admin_Alex");
+          names.Add("Artem");
+          names.Add("Admin_Misha");
+          names.Add("Andrew");
+          names.Add("Max");
+         
+            while(true)
             {
-                for (int p = 0; p < names.Count - 1 - i; p++) // страшно
+                Console.WriteLine("\n введите имя или выйдите из программы командой stop");
+                string? am = Console.ReadLine() ??"" ;
+                if (am == "stop")
                 {
-                    if ((names[p]).CompareTo(names[p+1]) <0)
-                    {
-                        string temp = names[p];
-                        names[p] = names[p+1];
-                        names[p+1] = temp;
-                    }
+                    break;
                 }
-            }
-            foreach (string name in names)
-            {
-                Console.WriteLine($" {name}");
+                
+
+
+                if (int.TryParse(am, out int num1) == true)
+                {
+                    Console.WriteLine("error");
+                    Console.ReadKey();
+                    continue;
+                }  
+                if (am == "")
+                {
+                    Console.WriteLine("имя не может быть пустым");
+                    Console.ReadKey();
+                    continue;
+                }
+            
+            bool useradmin = am.StartsWith("Admin_");
+
+                if (useradmin)
+                {
+                    Console.WriteLine("Вы админ вот все известные вам админы");
+                }
+                else
+                {
+                    Console.WriteLine("Вы обычный пользователь");
+                }
+                
+                foreach(string name in names)
+                {
+                    bool listadmins = name.StartsWith("Admin_");
+                    if (useradmin && listadmins)
+                    {
+                        Console.WriteLine($"{name}");
+                    }
+                    else if (!useradmin && !listadmins)
+                    {
+                        Console.WriteLine($"{name}");
+                    }
+
+                }
+                Console.WriteLine("Введите команду stop для остановки программы");
+                string? command = Console.ReadLine();
+                if (command == "stop")
+                {
+                    break;
+                }
+                else if (command == "killadmins")
+                {
+                
+                    for (int i = 0; i < names.Count; i++)
+                    {
+                    names.Remove("Admin_Alex");
+                    names.Remove("Admin_Misha"); //удаление переменной из динамического массива
+                    }
+                Console.WriteLine();
+                for (int i = 0; i < names.Count; i++)
+                {    
+                Console.WriteLine($"{names[i]}");
+                }
+                
+                }
             }
         }
    }
