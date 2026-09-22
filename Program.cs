@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
@@ -18,12 +19,12 @@ namespace c_larp;
    {     
         static void  Main (string[] args)
         {
-          List<string> Zov = new List<string>();
-          Zov.Add("Eugene | Admin | 10  | Екатеринбург");
-          Zov.Add("Masha | Guest | 11  |  Москва");
-          Zov.Add("Eben | Admin | 6  | Екатеринбург");
-          Zov.Add("Petyx | Guest | 9  | Стокгольм");
-          Zov.Add("Pedix | Admin | 15  | Москва");
+          List<Biboba> Zov = new List<Biboba>();
+          Zov.Add(new Biboba {Name = "Artem", Status = "Admin", Time = 10, City = "Москва" });
+          Zov.Add(new Biboba {Name = "Max", Status = "Guest", Time = 11, City = "Екатеринбург" });
+          Zov.Add(new Biboba {Name = "Micha", Status = "Admin", Time = 5, City = "Орехово-Зуево" });
+          Zov.Add(new Biboba {Name = "Liza", Status = "Admin", Time = 6, City = "Москва" });
+          Zov.Add(new Biboba {Name = "Lesha", Status = "Guest", Time = 15, City = "Москва" });
 
 
             
@@ -32,14 +33,14 @@ namespace c_larp;
           {
             Console.WriteLine("Система контроля доступа");
             Console.WriteLine("1 - Показать все логи");
-            Console.WriteLine("2 - Показать всех админов");
+            Console.WriteLine("2 - Показать всех админов из Москвы");
             Console.WriteLine("3 - Удалить всех гостей пришедших после 10");
             Console.WriteLine("4 - Выход из программы ");
             Console.WriteLine("\n Выберите опцию");
             Processmenu(Zov);
           }
             
-        static  void Processmenu (List<string> lox)
+        static  void Processmenu (List<Biboba> lox)
         {
             string? comand = Console.ReadLine();
             switch (comand)
@@ -47,7 +48,7 @@ namespace c_larp;
                 case "1":
                     for (int i = 0; i < lox.Count ; i++)
                     {
-                        Console.WriteLine($"{lox[i]}");
+                        Console.WriteLine($"Сотрудник -{lox[i].Name} , Статус -{lox[i].Status}, Время -{lox[i].Time} , Город -{lox[i].City} ");
                     }
                     Console.WriteLine("нажмите кнопку для завершения программы");
                     Console.ReadKey();
@@ -55,25 +56,19 @@ namespace c_larp;
                 case "2":
                     for (int i = 0; i < lox.Count; i++)
                     {
-                        if (lox[i].Contains("Admin")) //Contains обработчик данных внутри листа при строгом соблюдении того что мы укажем в листе и скобках. Удобен для условий
-                        {  
-                            Console.WriteLine($"{lox[i]}");
-                        }                        
-                    }
+                        if (lox[i].Status == "Admin" && lox[i].City =="Москва")
+                            Console.WriteLine($"Сотрудник {lox[i].Name} из города {lox[i].City}");
+                        }           
                     Console.WriteLine("Для выхода из программы нажмите любую кнопку");
-                    Console.ReadKey();
+                    Console.ReadKey();            
                     break;
                 case "3":
                     for (int i = lox.Count - 1; i>= 0 ;  i--) // от конца к началу нужно для удаления элементов и проверка начинается с конца в начало чтобы после удаления
                     // элементов те которые сдвинутся влево не заставили цикл пропустить шаги
                     {
-                        string[] names = lox[i].Split("|");
-
-                        int time = int.Parse(names[2].Trim()); // Trim() - убирает лишние пробелы в начале/конце строки внутри разрезанного массива.
-                        // Это нужно для валидации текста (чтобы "Guest " совпало с "Guest")
-                        // и для правильной типизации (чтобы сконвертировать " 11 " в число int без ошибок)
-                        if (names[1].Contains("Guest") && time > 10 )
+                        if (lox[i].Status == "Guest" && lox[i].Time > 10)
                         {
+                            Console.WriteLine($"Удален гость: {lox[i].Name}");
                             lox.RemoveAt(i);
                         }
                     }
@@ -90,7 +85,15 @@ namespace c_larp;
             }
         }
         }    
-     }
+    }
+
+public class Biboba
+{
+    public string? Name { get; set; } = string.Empty;
+    public string? Status { get; set; } = string.Empty;
+    public int Time { get; set; }
+    public string? City { get; set; } = string.Empty;
+}
 
 
 
