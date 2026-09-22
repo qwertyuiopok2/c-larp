@@ -10,6 +10,7 @@ using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
 using System.Text.Json.Serialization;
+using System.Xml;
 using Microsoft.VisualBasic;
 namespace c_larp;
 
@@ -17,86 +18,84 @@ namespace c_larp;
    {     
         static void  Main (string[] args)
         {
-          
-          List<string> names = new List<string>();
-          names.Add("Admin_Alex");
-          names.Add("Artem");
-          names.Add("Admin_Misha");
-          names.Add("Andrew");
-          names.Add("Max");
-         
-            while(true)
-            {
-                Console.WriteLine("\n введите имя или выйдите из программы командой stop");
-                string? am = Console.ReadLine() ??"" ;
-                if (am == "stop")
-                {
-                    break;
-                }
-                
+          List<string> Zov = new List<string>();
+          Zov.Add("Eugene | Admin | 10  | Екатеринбург");
+          Zov.Add("Masha | Guest | 11  |  Москва");
+          Zov.Add("Eben | Admin | 6  | Екатеринбург");
+          Zov.Add("Petyx | Guest | 9  | Стокгольм");
+          Zov.Add("Pedix | Admin | 15  | Москва");
 
 
-                if (int.TryParse(am, out int num1) == true)
-                {
-                    Console.WriteLine("error");
-                    Console.ReadKey();
-                    continue;
-                }  
-                if (am == "")
-                {
-                    Console.WriteLine("имя не может быть пустым");
-                    Console.ReadKey();
-                    continue;
-                }
             
-            bool useradmin = am.StartsWith("Admin_");
 
-                if (useradmin)
-                {
-                    Console.WriteLine("Вы админ вот все известные вам админы");
-                }
-                else
-                {
-                    Console.WriteLine("Вы обычный пользователь");
-                }
-                
-                foreach(string name in names)
-                {
-                    bool listadmins = name.StartsWith("Admin_");
-                    if (useradmin && listadmins)
+          while(true)
+          {
+            Console.WriteLine("Система контроля доступа");
+            Console.WriteLine("1 - Показать все логи");
+            Console.WriteLine("2 - Показать всех админов");
+            Console.WriteLine("3 - Удалить всех гостей пришедших после 10");
+            Console.WriteLine("4 - Выход из программы ");
+            Console.WriteLine("\n Выберите опцию");
+            Processmenu(Zov);
+          }
+            
+        static  void Processmenu (List<string> lox)
+        {
+            string? comand = Console.ReadLine();
+            switch (comand)
+            {
+                case "1":
+                    for (int i = 0; i < lox.Count ; i++)
                     {
-                        Console.WriteLine($"{name}");
+                        Console.WriteLine($"{lox[i]}");
                     }
-                    else if (!useradmin && !listadmins)
-                    {
-                        Console.WriteLine($"{name}");
-                    }
-
-                }
-                Console.WriteLine("Введите команду stop для остановки программы");
-                string? command = Console.ReadLine();
-                if (command == "stop")
-                {
+                    Console.WriteLine("нажмите кнопку для завершения программы");
+                    Console.ReadKey();
                     break;
-                }
-                else if (command == "killadmins")
-                {
-                
-                    for (int i = 0; i < names.Count; i++)
+                case "2":
+                    for (int i = 0; i < lox.Count; i++)
                     {
-                    names.Remove("Admin_Alex");
-                    names.Remove("Admin_Misha"); //удаление переменной из динамического массива
+                        if (lox[i].Contains("Admin")) //Contains обработчик данных внутри листа при строгом соблюдении того что мы укажем в листе и скобках. Удобен для условий
+                        {  
+                            Console.WriteLine($"{lox[i]}");
+                        }                        
                     }
-                Console.WriteLine();
-                for (int i = 0; i < names.Count; i++)
-                {    
-                Console.WriteLine($"{names[i]}");
-                }
-                
-                }
+                    Console.WriteLine("Для выхода из программы нажмите любую кнопку");
+                    Console.ReadKey();
+                    break;
+                case "3":
+                    for (int i = lox.Count - 1; i>= 0 ;  i--) // от конца к началу нужно для удаления элементов и проверка начинается с конца в начало чтобы после удаления
+                    // элементов те которые сдвинутся влево не заставили цикл пропустить шаги
+                    {
+                        string[] names = lox[i].Split("|");
+
+                        int time = int.Parse(names[2].Trim()); // Trim() - убирает лишние пробелы в начале/конце строки внутри разрезанного массива.
+                        // Это нужно для валидации текста (чтобы "Guest " совпало с "Guest")
+                        // и для правильной типизации (чтобы сконвертировать " 11 " в число int без ошибок)
+                        if (names[1].Contains("Guest") && time > 10 )
+                        {
+                            lox.RemoveAt(i);
+                        }
+                    }
+                    break;
+                case "4":
+                    Console.WriteLine("Введите команду - stop - для выхода из программы");
+                    string? leave = Console.ReadLine();
+                    if (leave == "stop")
+                    {
+                       Environment.Exit(0); //выйти из среды
+                    }
+                    break;
+
             }
         }
-   }
+        }    
+     }
+
+
+
+
+
 
    
              
