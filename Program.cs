@@ -1,18 +1,5 @@
-﻿using System.ComponentModel;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Dynamic;
-using System.Globalization;
-using System.Net.Http.Headers;
-using System.Net.NetworkInformation;
-using System.Net.Security;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
-using System.Runtime.CompilerServices;
-using System.Security.Authentication;
-using System.Text.Json.Serialization;
-using System.Xml;
-using Microsoft.VisualBasic;
+﻿using System.Reflection.Metadata;
+
 namespace c_larp;
 
 public class OchkoPredmet
@@ -63,55 +50,62 @@ class Inventory
                         Console.WriteLine($"\n С легендарной редкостью предмет {inventory[i].Name}  с доп уроном {inventory[i].Damage}");
                     }
                 }
-                break;
+                break;  
             }
 
             case "3":
             {
-                Console.WriteLine("Введите название предмета, которого хотим добавить");
+                if (inventory.Count >= 5)
+                {
+                    Console.WriteLine("Ошибка инвентарь заполнен");
+                    Console.ReadKey();
+                    break;
+                }
+                Console.WriteLine("Введите название предмета");
                 string? newitem = Console.ReadLine();
-                if (newitem != null)
+                if (newitem == null)
                 {
-                    Console.WriteLine("Введите редкость предмета, которого хотим добавить: Basic, Rare, Legendary");
-                    string? newredkost = Console.ReadLine();
-                    if (newredkost == "Basic" || newredkost == "Rare" || newredkost == "Legendary")
+                    Console.WriteLine("Ошибка");
+                    Console.ReadKey();
+                    break;
+                }
+                bool duplicate = false; //флаг проверки
+                for (int i = 0; i < inventory.Count; i++)
+                {
+                    if (inventory[i].Name == newitem)
                     {
-                        Console.WriteLine("Введите сколько дополнительного урона вносит данное оружие");
-                        string? num = Console.ReadLine();
-                        if(num != null)
-                        {
-                            if (int.TryParse(num, out int num1) == true)
-                            {
-                                inventory.Add(new OchkoPredmet{Name = newitem, Redkost = newredkost, Damage = num1});
-                                break;
-                            }
-                            else
-                            {
-                                Console.WriteLine("ОШИБКА");
-                                Console.ReadKey();
-                                return;
-                            }
-
-                        }
-                        else 
-                        {
-                            Console.WriteLine("ОШИБКА");
-                            Console.ReadKey();
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("ОШИБКА");
+                        Console.WriteLine("Ошибка");
                         Console.ReadKey();
-                        return;
+                        duplicate = true;
+                        break; //выход из цикла фор ведь дубликат найден
                     }
-                } 
-                else 
+                }
+                if (duplicate)
                 {
-                    return;
-                }               
-
+                    continue;
+                }
+                Console.WriteLine("Введите редкость предмета: Basic, Rare, Legendary");
+                string? newredkost = Console.ReadLine();
+                if (newredkost != "Basic" && newredkost != "Rare" && newredkost != "Legendary")
+                {
+                    Console.WriteLine("Ошибка");
+                    Console.ReadKey();
+                    break;
+                }
+                Console.WriteLine("Введите урон предмета");
+                string? newnum = Console.ReadLine();
+                if (int.TryParse(newnum, out int num1) == false || num1 < 0)
+                {
+                    Console.WriteLine("Ошибка");
+                    Console.ReadKey();
+                    break;
+                }
+                Console.WriteLine("Добавляем предмет...");
+                inventory.Add(new OchkoPredmet{Name = newitem, Redkost = newredkost, Damage = num1});
+                Console.WriteLine("\n Предмет успешно добавлен");
+                Console.WriteLine("Нажмите любую кнопку для выхода");
+                Console.ReadKey();
+                break;
             }
 
             case "4":
