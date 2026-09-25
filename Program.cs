@@ -27,7 +27,8 @@ class Inventory
         Console.WriteLine("-- 3 - Добавить предмет в инвентарь --");
         Console.WriteLine("-- 4 - Взять предмет в руки --");
         Console.WriteLine("-- 5 - Сумма урона всех предметов --");
-        Console.WriteLine("-- 6 - Выйти из инвентаря --");
+        Console.WriteLine("-- 6 - Урона предмета который в руках");
+        Console.WriteLine("-- 7 - Выйти из инвентаря --");
         Console.WriteLine("-- Выберите действие --");
 
         string? op = Console.ReadLine();
@@ -164,6 +165,30 @@ class Inventory
             break;
 
             case "6":
+            {
+                bool damagewrote = false;
+                for (int i = 0; i < inventory.Count; i++)
+                {
+                    if (inventory[i].Iseq == true)
+                    {
+                        Console.WriteLine($"Ваша экипировка : {inventory[i].Name} с уроном {inventory[i].Damage}");
+                        damagewrote = true;
+                        break;
+                    }  
+                }
+                if (damagewrote == true)
+                {
+                    Console.ReadKey();
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("У вас нет экипированного предмета");
+                    break;
+                }
+            }
+
+            case "7":
             {
                 Console.WriteLine($"\n Для выхода из программы нажимет любую кнопку");
                 Console.ReadKey();
