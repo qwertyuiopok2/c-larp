@@ -127,9 +127,18 @@ class Inventory
                 Console.WriteLine("Введите точное название предмета, который хотите взять в руки");
                 string? eqname = Console.ReadLine();
                 bool itemfound = false;
+                bool delete = false;
                 for (int i = 0; i < inventory.Count; i++) // Проверяем весь список чтобы была информация о всех предметах и соответственно если название предмета в массиве существует оно может быть экипировано то есть введено нами чтобы мы могли его экипировать
                 {
-                    if (inventory[i].Name == eqname)
+                    if (inventory[i].Name == eqname && inventory[i].Iseq == true)
+                    {
+                        Console.WriteLine("Убираем предмет из экипировки");
+                        inventory[i].Iseq = false;
+                        delete = true;  
+                        itemfound = true;                   
+                        break;
+                    }
+                    else if (inventory[i].Name == eqname && delete != true)
                     {
                         for (int j = 0; j < inventory.Count; j++) // внутренний цикл обнуляющий весь инвентарь после ввода того предмета который мы хотим экипировать (поменять статус на true)
                         {
@@ -147,7 +156,7 @@ class Inventory
                 }
                 else
                 {
-                    Console.WriteLine("предмет добавлен");
+                    Console.WriteLine("Действие вы");
                 }
                     Console.ReadKey();
                     break;
