@@ -26,7 +26,8 @@ class Inventory
         Console.WriteLine("-- 2 - Показать только легендарные предметы --");
         Console.WriteLine("-- 3 - Добавить предмет в инвентарь --");
         Console.WriteLine("-- 4 - Взять предмет в руки --");
-        Console.WriteLine("-- 5 - Выйти из инвентаря --");
+        Console.WriteLine("-- 5 - Сумма урона всех предметов --");
+        Console.WriteLine("-- 6 - Выйти из инвентаря --");
         Console.WriteLine("-- Выберите действие --");
 
         string? op = Console.ReadLine();
@@ -37,9 +38,17 @@ class Inventory
             {
                 for (int i = 0; i < inventory.Count; i++)
                 {
-                    string eq = inventory[i].Iseq ? "[В руках]" : ""; // ? заменяет  , а : заменяет elif
+                    Console.Write($"{inventory[i].Name} с редкостью {inventory[i].Redkost}, с дополнительным уроном {inventory[i].Damage} ");
 
-                    Console.WriteLine($"{inventory[i].Name} с редкостью {inventory[i].Redkost}, с дополнительным уроном {inventory[i].Damage} - {eq} ");
+                    if (inventory[i].Iseq)
+                    {
+                        Console.WriteLine(" в руках ");
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                    }
+
                 }
                 Console.WriteLine("ВАШ ИНВЕНТАРЬ");
                 break;
@@ -144,6 +153,17 @@ class Inventory
             }
 
             case "5":
+            Console.WriteLine("Подсчет общего урона инвентаря");
+            int TotalDamage = 0;
+            for (int i = 0; i < inventory.Count; i++)
+            {
+                TotalDamage += inventory[i].Damage;
+            }
+            Console.WriteLine($"Сумма всех предметов в вашем инветаре = {TotalDamage} ");
+            Console.ReadKey();
+            break;
+
+            case "6":
             {
                 Console.WriteLine($"\n Для выхода из программы нажимет любую кнопку");
                 Console.ReadKey();
@@ -153,3 +173,29 @@ class Inventory
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// string eq = inventory[i].Iseq ? "[В руках]" : "";  ------------> ? заменяет  , а : заменяет elif
