@@ -1,211 +1,118 @@
-﻿using System.Reflection.Metadata;
+﻿using System.Collections;
+using System.Dynamic;
+using System.Reflection;
+using System.Reflection.Metadata;
+using System.Runtime.Serialization.Formatters;
 
 namespace c_larp;
-
-public class OchkoPredmet
+public class Car
 {
-    public string? Name { get; set; } = string.Empty;
-    public string? Redkost { get; set; } = string.Empty;
-    public int Damage { get; set; }
-    public bool Iseq {get; set;} = false; //true в руках false в рюкзаке
-}
+    public string? Model {get; set; }
+    public string? Color {get; set; }
+    public int Horespower {get; set; }
 
-class Inventory
+
+    public Car(string? model, string? color, int horespower)
+    {
+        Model = model;
+        Color = color;
+        Horespower = horespower;
+
+
+        if (horespower <= 0)
+        {
+            Console.WriteLine("Мощность не может быть 0, установленна минимальная мощность 1");
+            Horespower = 1;
+        }
+
+        Console.WriteLine($"Выпущена новая марка машины {Model}");
+    }
+
+    
+}
+class Pugde
 {
     static void Main(string[] lox)
     {
-        List<OchkoPredmet> inventory = new List<OchkoPredmet>();
+        List<Car> Garage = new List<Car>();
 
-        inventory.Add(new OchkoPredmet{Name = "ржавый меч", Redkost = "Basic", Damage = 2});
-        inventory.Add(new OchkoPredmet{Name = "Палочка", Redkost = "Rare", Damage = 10});
-        inventory.Add(new OchkoPredmet{Name = "Рапира", Redkost = "Legendary", Damage = 50});
-        while (true)
-        {
-        Console.WriteLine("-- Ваш инвентарь --");
-        Console.WriteLine("-- 1 - Показать инвентарь --");
-        Console.WriteLine("-- 2 - Показать только легендарные предметы --");
-        Console.WriteLine("-- 3 - Добавить предмет в инвентарь --");
-        Console.WriteLine("-- 4 - Взять предмет в руки --");
-        Console.WriteLine("-- 5 - Сумма урона всех предметов --");
-        Console.WriteLine("-- 6 - Урона предмета который в руках");
-        Console.WriteLine("-- 7 - Выйти из инвентаря --");
-        Console.WriteLine("-- Выберите действие --");
+        Garage.Add(new Car("BMW M5", "Черный", 600));
+        Garage.Add(new Car("Pantera", "Белый", 700));
+        Garage.Add(new Car("Lada Granta", "Черный", 200));
 
+
+
+
+    while(true)
+    {
+        Console.WriteLine("1 - Показать машины в гараже");
+        Console.WriteLine("2 - Добавить новую машину в гараж");
+        Console.WriteLine("3 - Выйти из гаража");
         string? op = Console.ReadLine();
+        
+    
 
         switch (op)
         {
             case "1":
+            for(int i = 0; i < Garage.Count; i++)
             {
-                for (int i = 0; i < inventory.Count; i++)
-                {
-                    Console.Write($"{inventory[i].Name} с редкостью {inventory[i].Redkost}, с дополнительным уроном {inventory[i].Damage} ");
-
-                    if (inventory[i].Iseq)
-                    {
-                        Console.WriteLine(" в руках ");
-                    }
-                    else
-                    {
-                        Console.WriteLine();
-                    }
-
-                }
-                Console.WriteLine("ВАШ ИНВЕНТАРЬ");
-                break;
+                Console.WriteLine($"МАШИНА Модель - {Garage[i].Model}, Цвет - {Garage[i].Color}, Пробег - {Garage[i].Horespower}");
             }
 
-            case "2":
-            {
-                for (int i = 0; i < inventory.Count; i++)
-                {
-                    if (inventory[i].Redkost == "Legendary")
-                    {
-                        Console.WriteLine($"\n С легендарной редкостью предмет {inventory[i].Name}  с доп уроном {inventory[i].Damage}");
-                    }
-                }
-                break;  
-            }
-
-            case "3":
-            {
-                if (inventory.Count >= 5)
-                {
-                    Console.WriteLine("Ошибка инвентарь заполнен");
-                    Console.ReadKey();
-                    break;
-                }
-                Console.WriteLine("Введите название предмета");
-                string? newitem = Console.ReadLine();
-                if (newitem == null)
-                {
-                    Console.WriteLine("Ошибка");
-                    Console.ReadKey();
-                    break;
-                }
-                bool duplicate = false; //флаг проверки
-                for (int i = 0; i < inventory.Count; i++)
-                {
-                    if (inventory[i].Name == newitem)
-                    {
-                        Console.WriteLine("Ошибка");
-                        Console.ReadKey();
-                        duplicate = true;
-                        break; //выход из цикла фор ведь дубликат найден
-                    }
-                }
-                if (duplicate)
-                {
-                    continue;
-                }
-                Console.WriteLine("Введите редкость предмета: Basic, Rare, Legendary");
-                string? newredkost = Console.ReadLine();
-                if (newredkost != "Basic" && newredkost != "Rare" && newredkost != "Legendary")
-                {
-                    Console.WriteLine("Ошибка");
-                    Console.ReadKey();
-                    break;
-                }
-                Console.WriteLine("Введите урон предмета");
-                string? newnum = Console.ReadLine();
-                if (int.TryParse(newnum, out int num1) == false || num1 < 0)
-                {
-                    Console.WriteLine("Ошибка");
-                    Console.ReadKey();
-                    break;
-                }
-                Console.WriteLine("Добавляем предмет...");
-                inventory.Add(new OchkoPredmet{Name = newitem, Redkost = newredkost, Damage = num1});
-                Console.WriteLine("\n Предмет успешно добавлен");
-                Console.WriteLine("Нажмите любую кнопку для выхода");
-                Console.ReadKey();
-                break;
-            }
-            case "4":
-            {
-                Console.WriteLine("Экипировка оружия");
-                Console.WriteLine("Введите точное название предмета, который хотите взять в руки");
-                string? eqname = Console.ReadLine();
-                bool itemfound = false;
-                bool delete = false;
-                for (int i = 0; i < inventory.Count; i++) // Проверяем весь список чтобы была информация о всех предметах и соответственно если название предмета в массиве существует оно может быть экипировано то есть введено нами чтобы мы могли его экипировать
-                {
-                    if (inventory[i].Name == eqname && inventory[i].Iseq == true)
-                    {
-                        Console.WriteLine("Убираем предмет из экипировки");
-                        inventory[i].Iseq = false;
-                        delete = true;  
-                        itemfound = true;                   
-                        break;
-                    }
-                    else if (inventory[i].Name == eqname && delete != true)
-                    {
-                        for (int j = 0; j < inventory.Count; j++) // внутренний цикл обнуляющий весь инвентарь после ввода того предмета который мы хотим экипировать (поменять статус на true)
-                        {
-                            inventory[j].Iseq = false;
-                        }
-                        inventory[i].Iseq = true;
-                        itemfound = true;
-                        break;
-                    }
-                }
-                
-                if (itemfound != true)
-                {
-                    Console.WriteLine("Предмет не найден ошибка");
-                }
-                else
-                {
-                    Console.WriteLine("Действие вы");
-                }
-                    Console.ReadKey();
-                    break;
-            }
-
-            case "5":
-            Console.WriteLine("Подсчет общего урона инвентаря");
-            int TotalDamage = 0;
-            for (int i = 0; i < inventory.Count; i++)
-            {
-                TotalDamage += inventory[i].Damage;
-            }
-            Console.WriteLine($"Сумма всех предметов в вашем инветаре = {TotalDamage} ");
-            Console.ReadKey();
             break;
 
-            case "6":
+            case "2":
+            if (Garage.Count == 5)
             {
-                bool damagewrote = false;
-                for (int i = 0; i < inventory.Count; i++)
-                {
-                    if (inventory[i].Iseq == true)
-                    {
-                        Console.WriteLine($"Ваша экипировка : {inventory[i].Name} с уроном {inventory[i].Damage}");
-                        damagewrote = true;
-                        break;
-                    }  
-                }
-                if (damagewrote == true)
-                {
-                    Console.ReadKey();
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("У вас нет экипированного предмета");
-                    break;
-                }
-            }
-
-            case "7":
-            {
-                Console.WriteLine($"\n Для выхода из программы нажимет любую кнопку");
+                Console.WriteLine("В гараже закончилось место");
                 Console.ReadKey();
-                return;
+                break;
             }
-        }
+            Console.WriteLine("Введите модель новой машины");
+            string? newmodel = Console.ReadLine();
+            if (newmodel == null)
+            {
+                Console.WriteLine("Ошибка");
+                Console.ReadKey();
+                break;
+            }
+            Console.WriteLine("Введите цвет новой машины");
+            string? newcolor = Console.ReadLine();
+            if (newcolor == null)
+            {
+                Console.WriteLine("Ошибка");
+                Console.ReadKey();
+                break; 
+            }
+            Console.WriteLine("Введите мощность новой машины (в лошадиных силах)");
+            string? newpower = Console.ReadLine();
+            if(int.TryParse(newpower, out int num1) == false || num1 <= 0)
+            {
+                Console.WriteLine("Ошибка");
+                Console.ReadKey();
+                break;
+            }
+            else
+            {
+            Garage.Add(new Car(newmodel, newcolor, num1));
+            Console.WriteLine("Машина добавлена");
+            }
+            for(int i = 0; i < Garage.Count; i++)
+            {
+                Console.WriteLine($"МАШИНА Модель - {Garage[i].Model}, Цвет - {Garage[i].Color}, Пробег - {Garage[i].Horespower}");
+            }           
+            break;  
+            case "3":
+            Console.WriteLine("Нажмите любую кнопку чтобы выйти с гаража");
+            Console.ReadKey();
+            return;
+
         }
     }
+    }
+        
+
 }
 
 
@@ -231,5 +138,3 @@ class Inventory
 
 
 
-
-// string eq = inventory[i].Iseq ? "[В руках]" : "";  ------------> ? заменяет  , а : заменяет elif
