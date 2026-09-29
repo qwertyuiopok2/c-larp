@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Dynamic;
+using System.Net;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Runtime.Serialization.Formatters;
@@ -27,8 +28,17 @@ public class Car
 
         Console.WriteLine($"Выпущена новая марка машины {Model}");
     }
+    public Car(string? model) // Перегрузка конструкторами на примере (нужно вместить какие-то свойство, которые мы можем заранее заполнить в отдельном классе, а какие уже заполнены)
+    {
+        Model = model;
+        Color = "белый";
+        Horespower = 400;
+    }
 
-    
+    public void Printinfo()
+    {
+        Console.WriteLine($"[ГАРАЖ]: Автомобиль: {Model}, Цвет: {Color}, Мощность {Horespower}");
+    }    
 }
 class Pugde
 {
@@ -39,6 +49,10 @@ class Pugde
         Garage.Add(new Car("BMW M5", "Черный", 600));
         Garage.Add(new Car("Pantera", "Белый", 700));
         Garage.Add(new Car("Lada Granta", "Черный", 200));
+        Garage.Add(new Car("BOOM", "Белый", 500));
+
+
+        Garage.Add(new Car("OPA")); // компьютер просматривает наши конструкторы в отдельном классе и выбирает подходящий по условиям (1 строка требует заполнения, а остальные заполняются автоматически по контструктору)
 
 
 
@@ -57,7 +71,7 @@ class Pugde
             case "1":
             for(int i = 0; i < Garage.Count; i++)
             {
-                Console.WriteLine($"МАШИНА Модель - {Garage[i].Model}, Цвет - {Garage[i].Color}, Пробег - {Garage[i].Horespower}");
+                Garage[i].Printinfo();
             }
 
             break;
