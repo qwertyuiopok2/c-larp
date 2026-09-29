@@ -3,7 +3,9 @@ using System.Dynamic;
 using System.Net;
 using System.Reflection;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters;
+using System.Threading.Tasks.Sources;
 
 namespace c_larp;
 public class Car
@@ -28,10 +30,10 @@ public class Car
 
         Console.WriteLine($"Выпущена новая марка машины {Model}");
     }
-    public Car(string? model) // Перегрузка конструкторами на примере (нужно вместить какие-то свойство, которые мы можем заранее заполнить в отдельном классе, а какие уже заполнены)
+    public Car(string? color) // Перегрузка конструкторами на примере (нужно вместить какие-то свойство, которые мы можем заранее заполнить в отдельном классе, а какие уже заполнены)
     {
-        Model = model;
-        Color = "белый";
+        Model = "Питбуль";
+        Color = color;
         Horespower = 400;
     }
 
@@ -39,6 +41,16 @@ public class Car
     {
         Console.WriteLine($"[ГАРАЖ]: Автомобиль: {Model}, Цвет: {Color}, Мощность {Horespower}");
     }    
+
+
+
+    public void RePaint(string NewColor)
+    {
+        Color = NewColor;
+
+        Console.WriteLine($"Тюнниг: Машина: {Model}, успешно перекрашена - новый цвет {Color}");
+        Console.WriteLine();
+    }
 }
 class Pugde
 {
@@ -52,7 +64,7 @@ class Pugde
         Garage.Add(new Car("BOOM", "Белый", 500));
 
 
-        Garage.Add(new Car("OPA")); // компьютер просматривает наши конструкторы в отдельном классе и выбирает подходящий по условиям (1 строка требует заполнения, а остальные заполняются автоматически по контструктору)
+        Garage.Add(new Car("Черный")); // компьютер просматривает наши конструкторы в отдельном классе и выбирает подходящий по условиям (1 строка требует заполнения, а остальные заполняются автоматически по контструктору)
 
 
 
@@ -61,7 +73,8 @@ class Pugde
     {
         Console.WriteLine("1 - Показать машины в гараже");
         Console.WriteLine("2 - Добавить новую машину в гараж");
-        Console.WriteLine("3 - Выйти из гаража");
+        Console.WriteLine("3 - Перекрасить машину");
+        Console.WriteLine("4 - Выйти из гаража");
         string? op = Console.ReadLine();
         
     
@@ -116,8 +129,40 @@ class Pugde
             {
                 Console.WriteLine($"МАШИНА Модель - {Garage[i].Model}, Цвет - {Garage[i].Color}, Пробег - {Garage[i].Horespower}");
             }           
-            break;  
+            break;
             case "3":
+            Console.WriteLine("Введите модель машины в которую хотите перекрасить");
+            string? target = Console.ReadLine();
+            bool carfound = false;
+            
+            for(int i = 0; i < Garage.Count; i++)
+            {
+                if (Garage[i].Model == target)
+                {
+                    Console.WriteLine($"В какой цвет хотите перекрасить машину {Garage[i].Model}");
+                    string? usercolor = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(usercolor))
+                    {
+                        Console.WriteLine("Строка не может быть пустой");
+                        Console.ReadKey();
+                        break;
+                    }
+
+                    Garage[i].RePaint(usercolor);
+
+                    carfound = true;
+                    Console.ReadKey();
+                    break;
+                }
+            }
+            if (!carfound)
+            {
+                Console.WriteLine("Ошибка машина не найдена");
+                Console.ReadKey();
+            }
+            break;
+
+            case "4":
             Console.WriteLine("Нажмите любую кнопку чтобы выйти с гаража");
             Console.ReadKey();
             return;
@@ -125,30 +170,6 @@ class Pugde
         }
     }
     }
-        
+
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
