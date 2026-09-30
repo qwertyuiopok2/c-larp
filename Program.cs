@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System.Buffers.Binary;
+using System.Collections;
+using System.Data;
 using System.Dynamic;
 using System.Net;
 using System.Reflection;
@@ -52,19 +54,80 @@ public class Car
         Console.WriteLine();
     }
 }
-class Pugde
+
+public class GarageManager
 {
-    static void Main(string[] lox)
+    public List<Car> Garage { get; set; } = new List<Car>();
+
+    public GarageManager()
     {
-        List<Car> Garage = new List<Car>();
 
         Garage.Add(new Car("BMW M5", "Черный", 600));
         Garage.Add(new Car("Pantera", "Белый", 700));
         Garage.Add(new Car("Lada Granta", "Черный", 200));
-        Garage.Add(new Car("BOOM", "Белый", 500));
 
 
-        Garage.Add(new Car("Черный")); // компьютер просматривает наши конструкторы в отдельном классе и выбирает подходящий по условиям (1 строка требует заполнения, а остальные заполняются автоматически по контструктору)
+        Garage.Add(new Car("Черный"));
+    }
+    
+    public void ShowAllCars()
+    {
+        Console.WriteLine("\n Список всех машин в гараже:");
+
+        if (Garage.Count == 0)
+        {
+            Console.WriteLine("Гараж пуст");
+            return;
+        }
+    for (int i = 0; i < Garage.Count; i++)
+    {
+        Garage[i].Printinfo();
+    }
+    }
+    public void AddCarToGarage (Car newcar)
+    {
+        if (Garage.Count >= 5)
+        {
+            Console.WriteLine("Гараж заполнен");
+            return;
+        }
+        Garage.Add(newcar);
+        Console.WriteLine($"Ваш {newcar.Model} был успешно добавлен в гараж");
+    }
+    public void TryRePaint (string? TargetModel, string? NewColor)
+    {
+        if (string.IsNullOrWhiteSpace(NewColor))
+        {
+            Console.WriteLine("Неверный цвет");
+            return;
+        }
+        
+        bool CarFound = false;
+
+        for (int i = 0; i < Garage.Count; i++)
+        {
+            if (Garage[i].Model ==  TargetModel)
+            {
+                Garage[i].RePaint(NewColor);
+
+                CarFound = true;
+                break;
+            }
+        }
+            if (!CarFound)
+            {
+                Console.WriteLine($"Машина марки {TargetModel} была не найдена");
+            }
+    }
+}
+
+class Pugde
+{
+    static void Main(string[] lox)
+    {
+        
+
+        GarageManager manager = new GarageManager();
 
 
 
@@ -82,89 +145,61 @@ class Pugde
         switch (op)
         {
             case "1":
-            for(int i = 0; i < Garage.Count; i++)
-            {
-                Garage[i].Printinfo();
-            }
-
+            
+            manager.ShowAllCars();
+            Console.ReadKey();
             break;
 
             case "2":
-            if (Garage.Count == 5)
+
+            Console.WriteLine("Введите название новой машины");
+            string? addcar = Console.ReadLine();
+            if (int.TryParse(addcar, out int num) == true || string.IsNullOrWhiteSpace(addcar))
             {
-                Console.WriteLine("В гараже закончилось место");
+                Console.WriteLine("Ошибка неверное название модели");
                 Console.ReadKey();
-                break;
+                continue;
             }
-            Console.WriteLine("Введите модель новой машины");
-            string? newmodel = Console.ReadLine();
-            if (newmodel == null)
-            {
-                Console.WriteLine("Ошибка");
-                Console.ReadKey();
-                break;
-            }
-            Console.WriteLine("Введите цвет новой машины");
+            Console.WriteLine("Введите цвет новой машины: Черный, Желтый, Белый.");
             string? newcolor = Console.ReadLine();
-            if (newcolor == null)
+            if (newcolor != "Черный" && newcolor != "Желтый" && newcolor != "Белый" )
             {
-                Console.WriteLine("Ошибка");
+                Console.WriteLine("Такого цвета завод не производит");
                 Console.ReadKey();
-                break; 
+                continue;
             }
-            Console.WriteLine("Введите мощность новой машины (в лошадиных силах)");
-            string? newpower = Console.ReadLine();
-            if(int.TryParse(newpower, out int num1) == false || num1 <= 0)
+            Console.WriteLine("Введите силу двигателя нового машины");
+            string? horsepowers = Console.ReadLine();
+            if (int.TryParse(horsepowers, out int horse) == false || string.IsNullOrWhiteSpace(horsepowers) || horse < 0)
             {
-                Console.WriteLine("Ошибка");
+                Console.WriteLine("Ошибка ввода мощности");
                 Console.ReadKey();
-                break;
+                continue;
             }
-            else
-            {
-            Garage.Add(new Car(newmodel, newcolor, num1));
-            Console.WriteLine("Машина добавлена");
-            }
-            for(int i = 0; i < Garage.Count; i++)
-            {
-                Console.WriteLine($"МАШИНА Модель - {Garage[i].Model}, Цвет - {Garage[i].Color}, Пробег - {Garage[i].Horespower}");
-            }           
-            break;
-            case "3":
-            Console.WriteLine("Введите модель машины в которую хотите перекрасить");
-            string? target = Console.ReadLine();
-            bool carfound = false;
-            
-            for(int i = 0; i < Garage.Count; i++)
-            {
-                if (Garage[i].Model == target)
-                {
-                    Console.WriteLine($"В какой цвет хотите перекрасить машину {Garage[i].Model}");
-                    string? usercolor = Console.ReadLine();
-                    if (string.IsNullOrWhiteSpace(usercolor))
-                    {
-                        Console.WriteLine("Строка не может быть пустой");
-                        Console.ReadKey();
-                        break;
-                    }
-
-                    Garage[i].RePaint(usercolor);
-
-                    carfound = true;
-                    Console.ReadKey();
-                    break;
-                }
-            }
-            if (!carfound)
-            {
-                Console.WriteLine("Ошибка машина не найдена");
-                Console.ReadKey();
-            }
-            break;
-
-            case "4":
-            Console.WriteLine("Нажмите любую кнопку чтобы выйти с гаража");
+            Car userCar = new Car(addcar, newcolor, horse);
+            manager.AddCarToGarage(userCar);
             Console.ReadKey();
+            continue;
+
+            case "3":
+            Console.WriteLine("Цех покраски");
+            Console.WriteLine("Выберите машину, которую хотите перекрасить");
+
+            string? carModel = Console.ReadLine();
+            
+            Console.WriteLine("Введите желаемый цвет для покраски");
+
+            string? NewColor = Console.ReadLine();
+
+            manager.TryRePaint(carModel, NewColor);
+
+            Console.ReadKey();
+            break;
+
+            
+            case "4":
+
+            Console.WriteLine("Выход");
             return;
 
         }
