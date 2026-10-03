@@ -1,5 +1,6 @@
 ﻿using System.Buffers.Binary;
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using System.Dynamic;
 using System.Net;
@@ -7,221 +8,186 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters;
+using System.Threading.Tasks.Dataflow;
 using System.Threading.Tasks.Sources;
 using Microsoft.VisualBasic;
 
 namespace c_larp;
-public class Car
+
+public class Book
 {
-    public string? Model {get; set; }
-    public string? Color {get; set; }
-    public int Horespower {get; set; }
+    public string? Bookname {get; private set; }
+    public string? Authorsname {get; private set; }
+    public int Stranici {get; private set; }
+    public bool Vidana {get; set; }
 
 
-    public Car(string? model, string? color, int horespower)
+
+    public Book (string? name, string? authorsname, int stranici)
     {
-        Model = model;     
-        Color = color;
-        Horespower = horespower;
+        Bookname = name;
+        Authorsname = authorsname;
+        Stranici = stranici;
 
-        if (horespower <= 0)
+        Vidana = false;
+    }
+
+    public void printallbooks()
+    {
+        string? vidana;                                   
+        if (Vidana == true)
         {
-            Console.WriteLine("Мощность не может быть 0, установленна минимальная мощность 1");
-            Horespower = 1;
+            vidana = "на руках";
+        }
+        else
+        {
+            vidana = "на полке";
         }
 
-        Console.WriteLine($"Выпущена новая марка машины {Model}");
-    }
-    public Car(string? color) // Перегрузка конструкторами на примере (нужно вместить какие-то свойство, которые мы можем заранее заполнить в отдельном классе, а какие уже заполнены)
-    {
-        Model = "Питбуль";
-        Color = color;
-        Horespower = 400;
-    }
-
-    public void Printinfo()
-    {
-        Console.WriteLine($"[ГАРАЖ]: Автомобиль: {Model}, Цвет: {Color}, Мощность {Horespower}");
-    }    
-
-
-
-    public void RePaint(string NewColor)
-    {
-        Color = NewColor;
-
-        Console.WriteLine($"Тюнниг: Машина: {Model}, успешно перекрашена - новый цвет {Color}");
-        Console.WriteLine();
+        Console.WriteLine($"Книга {Bookname}, Автора {Authorsname}, с количеством {Stranici} страниц, сейчас она {vidana}");
     }
 }
 
-public class GarageManager
+
+
+public class LiblaryManager
 {
-    private List<Car> Garage { get; set; } = new List<Car>();
+    List<Book> Liblary {get; set;} = new List<Book>();
 
-    public GarageManager()
+    public LiblaryManager()
     {
-
-        Garage.Add(new Car("BMW M5", "Черный", 600));
-        Garage.Add(new Car("Pantera", "Белый", 700));
-        Garage.Add(new Car("Lada Granta", "Черный", 200));
-
-
-        Garage.Add(new Car("Черный"));
+        Liblary.Add(new Book("Мастер и Маргарита", "М.Булгаков", 448));
+        Liblary.Add(new Book("Капитанская дочка", "А.Пушкин", 160));
     }
-    
-    public void ShowAllCars()
-    {
-        Console.WriteLine("\n Список всех машин в гараже:");
 
-        if (Garage.Count == 0)
+    public void Showallbooks()
+    {
+        Console.WriteLine("Библиотека");
+
+        if (Liblary.Count >= 150)
         {
-            Console.WriteLine("Гараж пуст");
+            Console.WriteLine("Ошибка библиотека переполнена");
+            Console.ReadKey();
             return;
         }
-    for (int i = 0; i < Garage.Count; i++)
-    {
-        Garage[i].Printinfo();
-    }
-    }
-    public bool AddCarToGarage (Car newcar)
-    {
-        if (Garage.Count >= 5)
-        {
-            Console.WriteLine("Гараж заполнен");
-            return false;
-        }
-        Garage.Add(newcar);
-        Console.WriteLine($"Ваш {newcar.Model} был успешно добавлен в гараж");
-        return true;
-    }
-    public void TryRePaint (string? TargetModel, string? NewColor)
-    {
-        if (string.IsNullOrWhiteSpace(NewColor))
-        {
-            Console.WriteLine("Неверный цвет");
-            return;
-        }
-        
-        bool CarFound = false;
 
-        for (int i = 0; i < Garage.Count; i++)
+        for (int i = 0; i < Liblary.Count; i++)
         {
-            if (Garage[i].Model ==  TargetModel)
-            {
-                Garage[i].RePaint(NewColor);
-
-                CarFound = true;
-                break;
-            }
+            Liblary[i].printallbooks();
         }
-            if (!CarFound)
-            {
-                Console.WriteLine($"Машина марки {TargetModel} была не найдена");
-            }
     }
-    public bool Dupl(string? model)
+
+    public bool dublicate (string? newnamebook)
     {
-        for (int i = 0; i < Garage.Count; i++)
+        for (int i = 0; i < Liblary.Count; i++)
         {
-            if (Garage[i].Model == model)
+            if (Liblary[i].Bookname == newnamebook)
             {
+                Console.WriteLine("Такая книга уже существует");
                 return true;
             }
         }
         return false;
     }
+    public bool publicate (string? newnamebook)
+    {
+        for (int i = 0; i < Liblary.Count; i++)
+        {
+            if (Liblary[i].Bookname == newnamebook)
+            {
+                Console.WriteLine("Книга найдена");
+                Liblary[i].Vidana = true;
+                return false;
+            }           
+        }
+        Console.WriteLine("Книга не найдена");
+        return true;      
+    }
+
+    
+    public bool addnewbook(Book newbook)
+    {
+        if (Liblary.Count >= 5)
+        {
+            Console.WriteLine("Библиотека заполнена");
+            return true;
+        }
+        Liblary.Add(newbook);
+        return false;
+    }
 }
 
-class Pugde
+class Pudge
 {
-    static void Main(string[] lox)
+    static void Main()
     {
-        
+        LiblaryManager manager = new LiblaryManager();
 
-        GarageManager manager = new GarageManager();
-
-
-
-
-    while(true)
-    {
-        Console.WriteLine("1 - Показать машины в гараже");
-        Console.WriteLine("2 - Добавить новую машину в гараж");
-        Console.WriteLine("3 - Перекрасить машину");
-        Console.WriteLine("4 - Выйти из гаража");
-        string? op = Console.ReadLine();
-        
-    
-
-        switch (op)
+        while (true)
         {
-            case "1":
-            
-            manager.ShowAllCars();
-            Console.ReadKey();
-            break;
+            Console.WriteLine("1 - Показать все книги");
+            Console.WriteLine("2 -  Добавить книгу");
+            Console.WriteLine("3 - Выдать книгу читателю");
+            Console.WriteLine("4 - Выход с библиотеки");
 
-            case "2":
+            string? op = Console.ReadLine();
 
-            Console.WriteLine("Введите название новой машины");
-            string? addcar = Console.ReadLine();
-            if (int.TryParse(addcar, out int num) == true ||string.IsNullOrWhiteSpace(addcar))
+
+            switch (op)
             {
-                Console.WriteLine("Ошибка неверное название модели");
-                Console.ReadKey();
+                case "1":
+                Console.WriteLine("Библиотека");
+                manager.Showallbooks();
                 continue;
-            }
-            if (manager.Dupl(addcar))
-            {
-                Console.WriteLine("Ошибка: машина с таким названием существует");
+
+                case "2":
+                Console.WriteLine("Введите название книги, которую хотите добавить");
+                string? newbookname = Console.ReadLine();
+                if (int.TryParse(newbookname, out int num1) == true || string.IsNullOrWhiteSpace(newbookname))
+                {
+                    Console.WriteLine("Неверное название книги");
+                    Console.ReadKey();
+                    continue;
+                }
+                manager.dublicate(newbookname);
+                Console.WriteLine("Введите автора книги");
+                 string? newavtor = Console.ReadLine();
+                if (int.TryParse(newavtor, out int num2) == true || string.IsNullOrWhiteSpace(newbookname))
+                {
+                    Console.WriteLine("Неверное имя автора");
+                    Console.ReadKey();
+                    continue;
+                }
+                Console.WriteLine("Введите количество страниц в книге");
+                string? s = Console.ReadLine();
+                if (int.TryParse(s, out int num3) == false || string.IsNullOrWhiteSpace(s))
+                {
+                    Console.WriteLine("Неверно введено количество страниц");
+                    Console.ReadKey();
+                    continue;
+                }
+                Book newbook = new Book(newbookname, newavtor, num3);
+                manager.addnewbook(newbook);
+                Console.ReadKey();
+                break;
+                case "3":
+
+                Console.WriteLine("Напишите название книги, которую хотите взять");
+                string? ekipbook = Console.ReadLine();
+                 if (int.TryParse(ekipbook, out int nu) == true || string.IsNullOrWhiteSpace(ekipbook))
+                {
+                    Console.WriteLine("Неверное название книги");
+                    Console.ReadKey();
+                    continue;
+                }
+                manager.publicate(ekipbook);
+                break;
+                case "4":
+                Console.WriteLine("Выход из библиотеки");
                 return;
             }
-            Console.WriteLine("Введите цвет новой машины: Черный, Желтый, Белый.");
-            string? newcolor = Console.ReadLine();
-            if (newcolor != "Черный" && newcolor != "Желтый" && newcolor != "Белый" )
-            {
-                Console.WriteLine("Такого цвета завод не производит");
-                Console.ReadKey();
-                continue;
-            }
-            Console.WriteLine("Введите силу двигателя новой машины");
-            string? horsepowers = Console.ReadLine();
-            if (int.TryParse(horsepowers, out int horse) == false || string.IsNullOrWhiteSpace(horsepowers) || horse < 0)
-            {
-                Console.WriteLine("Ошибка ввода мощности");
-                Console.ReadKey();
-                continue;
-            }
-            Car userCar = new Car(addcar, newcolor, horse);
-            manager.AddCarToGarage(userCar);
-            Console.ReadKey();
-            continue;
-
-            case "3":
-            Console.WriteLine("Цех покраски");
-            Console.WriteLine("Выберите машину, которую хотите перекрасить");
-
-            string? carModel = Console.ReadLine();
-            
-            Console.WriteLine("Введите желаемый цвет для покраски");
-
-            string? NewColor = Console.ReadLine();
-
-            manager.TryRePaint(carModel, NewColor);
-
-            Console.ReadKey();
-            break;
-
-            
-            case "4":
-
-            Console.WriteLine("Выход");
-            return;
-
         }
     }
-    }
-
-
 }
+
+
