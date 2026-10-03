@@ -8,6 +8,7 @@ using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters;
 using System.Threading.Tasks.Sources;
+using Microsoft.VisualBasic;
 
 namespace c_larp;
 public class Car
@@ -19,10 +20,9 @@ public class Car
 
     public Car(string? model, string? color, int horespower)
     {
-        Model = model;
+        Model = model;     
         Color = color;
         Horespower = horespower;
-
 
         if (horespower <= 0)
         {
@@ -57,7 +57,7 @@ public class Car
 
 public class GarageManager
 {
-    public List<Car> Garage { get; set; } = new List<Car>();
+    private List<Car> Garage { get; set; } = new List<Car>();
 
     public GarageManager()
     {
@@ -84,15 +84,16 @@ public class GarageManager
         Garage[i].Printinfo();
     }
     }
-    public void AddCarToGarage (Car newcar)
+    public bool AddCarToGarage (Car newcar)
     {
         if (Garage.Count >= 5)
         {
             Console.WriteLine("Гараж заполнен");
-            return;
+            return false;
         }
         Garage.Add(newcar);
         Console.WriteLine($"Ваш {newcar.Model} был успешно добавлен в гараж");
+        return true;
     }
     public void TryRePaint (string? TargetModel, string? NewColor)
     {
@@ -118,6 +119,17 @@ public class GarageManager
             {
                 Console.WriteLine($"Машина марки {TargetModel} была не найдена");
             }
+    }
+    public bool Dupl(string? model)
+    {
+        for (int i = 0; i < Garage.Count; i++)
+        {
+            if (Garage[i].Model == model)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
@@ -154,11 +166,16 @@ class Pugde
 
             Console.WriteLine("Введите название новой машины");
             string? addcar = Console.ReadLine();
-            if (int.TryParse(addcar, out int num) == true || string.IsNullOrWhiteSpace(addcar))
+            if (int.TryParse(addcar, out int num) == true ||string.IsNullOrWhiteSpace(addcar))
             {
                 Console.WriteLine("Ошибка неверное название модели");
                 Console.ReadKey();
                 continue;
+            }
+            if (manager.Dupl(addcar))
+            {
+                Console.WriteLine("Ошибка: машина с таким названием существует");
+                return;
             }
             Console.WriteLine("Введите цвет новой машины: Черный, Желтый, Белый.");
             string? newcolor = Console.ReadLine();
@@ -168,7 +185,7 @@ class Pugde
                 Console.ReadKey();
                 continue;
             }
-            Console.WriteLine("Введите силу двигателя нового машины");
+            Console.WriteLine("Введите силу двигателя новой машины");
             string? horsepowers = Console.ReadLine();
             if (int.TryParse(horsepowers, out int horse) == false || string.IsNullOrWhiteSpace(horsepowers) || horse < 0)
             {
