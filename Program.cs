@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.VisualBasic;
-
-namespace c_larp;
+﻿namespace c_larp;
 
 public class Card
 {
@@ -129,7 +126,7 @@ public class Card
         }
         _pincode = newpin;
         return true;
-    }
+    }    
 }
 
 
@@ -167,7 +164,7 @@ class Program
                         Console.WriteLine("Карта заблокирована");
                     }
                     Console.WriteLine("Введите четырех значный код");
-                    string? userpin = Console.ReadLine();
+                    string? userpin = ReadSecretPin();
 
                     myCard.CheckBalanse(userpin);
                     Console.ReadKey();
@@ -177,7 +174,7 @@ class Program
 
                     Console.WriteLine("Пополнения счета");
                     Console.WriteLine("Введите пинкод");
-                    string? code = Console.ReadLine();
+                    string? code = ReadSecretPin();
                     if (int.TryParse(code, out int num5) == false || string.IsNullOrWhiteSpace(code))
                     {
                         Console.WriteLine("Пинкод введен не корректно");
@@ -210,7 +207,7 @@ class Program
                 case "3":
                     Console.WriteLine("Снятие денег");
                     Console.WriteLine("Введите пинкод");
-                    string? pin = Console.ReadLine();
+                    string? pin = ReadSecretPin();
 
                     if (int.TryParse(pin, out int num2) == false || string.IsNullOrWhiteSpace(pin))
                     {
@@ -255,9 +252,9 @@ class Program
                 case "4":
                 {
                 Console.WriteLine("Введите пинкод");
-                string? oldpin = Console.ReadLine();
+                string? oldpin = ReadSecretPin();
                 Console.WriteLine("Введите новый пинкод");
-                string? newpin = Console.ReadLine();
+                string? newpin = ReadSecretPin();
                 if (myCard.Changepin(oldpin, newpin) == false)
                 {
                     Console.WriteLine("Ошибка не удалось сменить пинкод");
@@ -275,5 +272,40 @@ class Program
                     return;
             }
         }
+    }
+    static string ReadSecretPin()
+    {
+        string pin = "";    // Сейф куда записывается пин-код
+
+        while (true)
+        {
+            // Перехват клавиши без вывода на экран
+            ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+
+            if (keyInfo.Key == ConsoleKey.Enter)    // Если пользователь нажал enter он закончил вводить пин
+            {
+                Console.WriteLine();    // Перевод строки на новую строку в консоли
+                break; // Выход из бесконечного списка
+            }
+            // Обработка клавиши Backspase (Стирание)
+            //Если пользователь нажал стереть при том что ошибся и в его (нашем) и в его (или у нас) уже есть буквы
+
+            if (keyInfo.Key == ConsoleKey.Backspace && pin.Length > 0)
+            {
+                pin = pin.Substring(0, pin.Length - 1);     // Удаление самого последнего символа из памяти в нашей строке  
+                //Главный трюк со стиранием с экрана
+                // \b - Возращение курсора на 1 шаг назад
+                // Пробел - зачистка старой звездочки пустотой
+                // \b - сново возвращает курсор назад чтобы новый символ стал на пустое место 
+                Console.WriteLine("\b \b");
+            }
+            // Проверка ввода нажатия имменно текстовой клавиши (цифры / буквы) вместо shift, ctrl, Alt, esc.
+            else if(!char.IsControl(keyInfo.KeyChar))
+            {
+                pin += keyInfo.KeyChar; // Добавление реального символа в наш сейф текста pin
+                Console.Write("*"); // Замена текста с невидимых букв на звездочки обманки на экран
+            }
+        }
+        return pin; // Возращаем полностью секретный пин-код
     }
 }
