@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Data;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Transactions;
-
+﻿using System.Linq;
 namespace c_larp;
 
 public class Car
@@ -55,10 +50,12 @@ public class Car
         {
             Fuel = MaxFuel;
             Console.WriteLine($"Вы заправили полный бак в свою малыху а именно {MaxFuel} (удивительно)");
-            return;
+        }
+        else
+        {
+            Console.WriteLine($"Вы заправили {litrs}");
         }
         Console.WriteLine($"Вы заправили свою машину на {litrs} лит. теперь у вас {Fuel}");
-        return;
     }   
 }
 
