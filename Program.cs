@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System.Buffers;
+using System.Data.Common;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 namespace c_larp;
 
 public class Car
 {
-    public string? Model {get; private set;}
+    public string? Model {get; private set;}    
     public string? Color {get; private set;}
     public double Fuel {get ; private set;}
     public double MaxFuel {get; private set;}
@@ -106,6 +109,59 @@ public class GarageManager
         {
             car.Drive(distance);
 
+        }
+    }
+    public void ReadyCars()
+    {
+        Console.WriteLine("Машины готовые к дальнему рейсу:");
+
+        List<Car> Readycar = _cars.Where(Car => Car.Fuel > (Car.MaxFuel / 2)).ToList();
+
+        if (Readycar.Count == 0)
+        {
+            Console.WriteLine("Ни одна машина ни готова к рейсу");
+            return;
+        }
+
+        foreach(Car car in Readycar)
+        {
+            Console.WriteLine($"{car.Model} {car.Color} - готово, состояние его бака {car.Fuel}/{car.MaxFuel} litrs");
+        }
+        // ToList - создает отдельный новый список  не меняя старый для удобства который может быть изменен (только с нашими свойствами)
+    }
+    public void FoundCarModel(string carfound)
+    {
+        Console.WriteLine("Поиск машины...");
+        
+        // FirstOrDefault - поиск первой машины совпадающую с запросом
+        // ToLower - упрощение можно писать не обращая внимание на заглавные буквы он их пропустит
+        Car? carfund = _cars.FirstOrDefault(c => c.Model.ToLower() == carfound.ToLower());
+
+        if (carfund == null)
+        {
+            Console.WriteLine($"Машина модели {carfound} была не найдена");
+        }
+        else
+        {
+            Console.WriteLine($"{carfund.Model} с цветом {carfund.Color} была найдена");
+        }
+    }
+    public void fuelsortir()
+    {
+
+        Console.WriteLine("Сортировка автопарка по уровню топлива");
+
+        if (_cars.Count == 0)
+        {
+            Console.WriteLine("Ошибка ваш автопарк пуст");
+            return;
+        }
+        // OrderByDescending - сортировка по убыванию, а OrderBy - сортировка по возрастанию
+        List<Car> carsort = _cars.OrderByDescending(c => c.Fuel).ToList();
+
+        foreach(Car car in carsort)
+        {
+            Console.WriteLine($"{car.Model} с топливом {car.Fuel}");
         }
     }
 }
