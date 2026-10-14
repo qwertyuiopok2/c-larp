@@ -1,139 +1,94 @@
 ﻿using System.Buffers;
 using System.Data;
 using System.Data.Common;
+using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 namespace c_larp;
 
-public class Car
+public class BankClient
 {
-    public string? Model {get; private set;} 
-    public int Fuel {get ; private set;}
-    public int MaxFuel {get; private set;}
-    public bool Fix {get; private set;} = false;
-    public string? CarDriver {get; private set;}
+    public string? Name {get; private set;}
+    public double Balance {get; private set;}
+    public bool Block {get; private set;}
+    public int FaildTry {get; private set;}
+    public string? CardType {get; private set;} // gold, silver, platinum, base
 
 
-
-    public Car(string? model, int fuel, int maxfuel, bool fix, string? cardriver)
+    public BankClient(string? name, double balance, bool block, int faildtry, string? cardtype)
     {
-        Model = model;
-        Fuel = fuel;
-        MaxFuel = maxfuel;
-        Fix = fix;
-        CarDriver = cardriver;
+        Name = name;
+        Balance = balance;
+        Block = block;
+        FaildTry = faildtry;
+        CardType = cardtype;
     }
 }
 
-public class FleetManager
+public class BankSystem
 {
-    private List<Car> _cars = new List<Car>()
+    private List<BankClient> _bankClients = new List<BankClient>()
     {
-        new Car("VOLVO", 200, 400, false, "Steve"),
-        new Car("PedroMobil", 500, 700, false, "SteveJobs"),
-        new Car("Uber", 50, 200, true, "Pedro")
+        new BankClient("Alexey", 7000, false, 0, "platinum"),
+        new BankClient("Stive", 100000, false, 0, "platinum"),
+        new BankClient("Misha", 2000000000, true, 3, "silver"),
+        new BankClient("Artem", 1500, false, 2, "gold"),
+        new BankClient("Myrebit", 0, true, 3, "base")
     };
-    public void ShowAllDrivers()
+
+    public void ShowAllVipClients()
     {
-        Console.WriteLine("Вот все водители --");
+        Console.WriteLine("Вывод вип клиентов");
 
-        List<string?> drivers = _cars.Select(c => c.CarDriver).ToList();
+        List<BankClient> vip = _bankClients.Where(c => c.Block == false && (c.CardType == "platinum" || c.CardType == "gold")).OrderByDescending(c => c.Balance).ToList();
 
-        foreach (string? name in drivers)
+
+        foreach(BankClient client in vip)
         {
-            Console.WriteLine($"Водитель {name}");
+            Console.WriteLine($"{client}");
         }
     }
-    public void CheckEmergency()
+
+    public void Checksecurityalert()
     {
-        Console.WriteLine("Проверка автопарка на низкий уровень топлива");
+        Console.WriteLine("Сканирование банковской системы на ошибки ввода пинкода");
 
-        bool cars = _cars.Any(c => c.Fuel < 15 && !c.Fix);
+        bool SecuriteAlertPinAttemp = _bankClients.Any(c =>c.Block == false && c.FaildTry == 2 );
 
-        if (cars)
+        if (SecuriteAlertPinAttemp)
         {
-            Console.WriteLine("Заправтесь");
+            Console.WriteLine($"лимит ввода был превышен");
         }
         else
         {
-            Console.WriteLine("Все в порядке");
-        }
-    }
-    public void Printfixcars()
-    {
-        Console.WriteLine("Идет подсчет машин");
-
-        int fixcars = _cars.Count(c => c.Fix);
-
-        int nfixcars = _cars.Count - fixcars;
-
-        Console.WriteLine($"Всего машин {_cars.Count}");
-        Console.WriteLine($"В ремонте из них {fixcars}");
-        Console.WriteLine($"Остальные в количестве {nfixcars} работают исправно");
-    }
-
-    public void ShowTopThreeFuelCars()
-    {
-        Console.WriteLine("ТОП 3 МАШИНЫ ПО ЗАПРАВЛНОМУ ТОПЛИВУ");
-
-        List<Car> top3 = _cars.OrderByDescending(c => c.Fuel).Take(3).ToList();
-
-        int position = 1;
-        foreach(Car car in top3)
-        {
-            Console.WriteLine($"{car.Fuel}/{car.MaxFuel} л в машине {car.Model} - {position} место");
-            position++;
+            Console.WriteLine("Пин код был успешно введен");
         }
     }
 
+    public void Getfullmoney()
+    {
+        Console.WriteLine("Подсчет денежных средств на всех картах");
+        Thread.Sleep(1000);
+
+        double Doubtfullmoney = _bankClients.Where(c => c.Block == true).Sum(c => c.Balance);
+
+        Console.WriteLine($"Общая сумма замороженная на заблокированых картах{Doubtfullmoney}");
+    }
+    
 }
 
-public class Program
+class Programm
 {
-  
     static void Main(string[] args)
     {
+        BankSystem system = new BankSystem();
 
-        FleetManager fleetconstrukt = new FleetManager();
-        
 
         while (true)
         {
-            Console.WriteLine("\n Меню автопарка");
-            Console.WriteLine("1 - Показать всех водителей");
-            Console.WriteLine("2 - Проверка уровня топлива машин");
-            Console.WriteLine("3 - Топ 3 машины по уровню топлива");
-            Console.WriteLine("4 - выйти ");
-            Console.WriteLine("Выберите действие");
 
-            string? op =  Console.ReadLine();
-
-            switch (op)
-            {
-                case "1":
-                fleetconstrukt.ShowAllDrivers();
-                Console.ReadKey();
-                continue;
-                case "2":
-                fleetconstrukt.CheckEmergency();
-                Console.ReadKey();
-                continue;
-                case "3":
-                fleetconstrukt.ShowTopThreeFuelCars();
-                Console.ReadKey();
-                continue;
-                
-                case "4":
-                {
-                    Console.WriteLine("Выход из программы");
-                    return;
-                }
-
-                default:
-                Console.WriteLine("Неверный пункт в меню");
-                break;
-            }
         }
 
     }
