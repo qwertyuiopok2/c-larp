@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Dynamic;
@@ -8,88 +9,53 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 namespace c_larp;
 
-public class BankClient
+public class FuelType
 {
-    public string? Name {get; private set;}
-    public double Balance {get; private set;}
-    public bool Block {get; private set;}
-    public int FaildTry {get; private set;}
-    public string? CardType {get; private set;} // gold, silver, platinum, base
+    public int Number {get; private set;}
+    public string? Fueltype {get; private set;}
+    public double PricePerLitr {get; private set;}
+    public double _fuelAvailable;
 
-
-    public BankClient(string? name, double balance, bool block, int faildtry, string? cardtype)
+    public FuelType (int number, string? fueltype, double priceperlitr, double fuelavailable)
     {
-        Name = name;
-        Balance = balance;
-        Block = block;
-        FaildTry = faildtry;
-        CardType = cardtype;
+        Number = number;
+        Fueltype = fueltype;
+        PricePerLitr = priceperlitr;
+        _fuelAvailable = fuelavailable;
     }
 }
-
-public class BankSystem
+public class GasStationManager
 {
-    private List<BankClient> _bankClients = new List<BankClient>()
+    List<FuelType> GasStation = new List<FuelType>()
     {
-        new BankClient("Alexey", 7000, false, 0, "platinum"),
-        new BankClient("Stive", 100000, false, 0, "platinum"),
-        new BankClient("Misha", 2000000000, true, 3, "silver"),
-        new BankClient("Artem", 1500, false, 2, "gold"),
-        new BankClient("Myrebit", 0, true, 3, "base")
+        new FuelType(1, "95", 70.5 , 400),
+        new FuelType(2, "100", 120.4 , 200),
+        new FuelType(3, "ДТ", 50.1 , 500),
+        new FuelType(4, "92", 60.2 , 300),
+        new FuelType(5, "Электро", 70.5 , 100)
     };
-
-    public void ShowAllVipClients()
+    public bool DispanceFuel(double litrs, string? type)
     {
-        Console.WriteLine("Вывод вип клиентов");
-
-        List<BankClient> vip = _bankClients.Where(c => c.Block == false && (c.CardType == "platinum" || c.CardType == "gold")).OrderByDescending(c => c.Balance).ToList();
-
-
-        foreach(BankClient client in vip)
+        if (litrs < 0)
         {
-            Console.WriteLine($"{client}");
+            return false;
         }
-    }
-
-    public void Checksecurityalert()
-    {
-        Console.WriteLine("Сканирование банковской системы на ошибки ввода пинкода");
-
-        bool SecuriteAlertPinAttemp = _bankClients.Any(c =>c.Block == false && c.FaildTry == 2 );
-
-        if (SecuriteAlertPinAttemp)
+        if (type == null)
         {
-            Console.WriteLine($"лимит ввода был превышен");
+            return false;
         }
-        else
+        List<FuelType> needcolonka = GasStation.Where(c => type == c.Fueltype).ToList();
+        foreach(FuelType lox in needcolonka)
         {
-            Console.WriteLine("Пин код был успешно введен");
+            if(lox._fuelAvailable < litrs)
+            {
+                return false;
+            }
+            else
+            {
+                lox._fuelAvailable = lox._fuelAvailable - litrs * lox.PricePerLitr;
+                return true;
+            }
         }
-    }
-
-    public void Getfullmoney()
-    {
-        Console.WriteLine("Подсчет денежных средств на всех картах");
-        Thread.Sleep(1000);
-
-        double Doubtfullmoney = _bankClients.Where(c => c.Block == true).Sum(c => c.Balance);
-
-        Console.WriteLine($"Общая сумма замороженная на заблокированых картах{Doubtfullmoney}");
-    }
-    
-}
-
-class Programm
-{
-    static void Main(string[] args)
-    {
-        BankSystem system = new BankSystem();
-
-
-        while (true)
-        {
-
-        }
-
     }
 }
