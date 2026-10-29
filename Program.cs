@@ -4,143 +4,87 @@ using System.Data;
 using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks.Dataflow;
 namespace c_larp;
 
-public class FuelType
+public class Hero
 {
-    public int Number {get; private set;}
-    public string? Fueltype {get; private set;}
-    public double PricePerLitr {get; private set;}
-    public bool Work{get; private set;}
-    public double _fuelAvailable;
+    public string? Name { get; private set; } 
+    public int Health { get ; private set; }
+    public int Damage { get; private set; }
 
-    public FuelType (int number, string? fueltype, double priceperlitr, bool work, double fuelavailable)
+    public Hero (string? name, int health, int damage)
     {
-        Number = number;
-        Fueltype = fueltype;
-        PricePerLitr = priceperlitr;
-        Work = work;
-        _fuelAvailable = fuelavailable;
+        Name = name;
+        Health = health;
+        Damage = damage;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        Health -= damage;
+        if (Health < 0)
+        {
+            Health = 0;
+        }
+
+        Console.WriteLine($"{Name} получил {damage} едениц урона текущие хп {Health}");
+    }
+    public void Attack(Hero target)
+    {
+        Console.WriteLine($"{Name} замахивается мечом на {target.Name}");
+
+        target.TakeDamage(Damage);
     }
 }
-public class GasStationManager
+class Program
 {
-    List<FuelType> GasStation = new List<FuelType>()
+    static void Main(string[] args)
     {
-        new FuelType(1, "95", 70.5 , true, 400),
-        new FuelType(2, "100", 120.4 , true, 200),
-        new FuelType(3, "ДТ", 50.1 , true, 500),
-        new FuelType(4, "92", 60.2 , false, 300),
-        new FuelType(5, "Электро", 70.5 ,false,  100)
-    };
-    public bool DispanceFuel(string? litrs, string? type)
-    {
-        if (double.TryParse(litrs, out double result) == false)
+        Console.WriteLine("Добро пожаловать на кровавую арену смерти");
+
+        Hero warrior = new Hero("Джентельмен", 500, 70);
+        Hero monster = new Hero("Пекка", 250, 50);
+
+        Console.WriteLine($"На арену выходят {warrior.Name} с дамагом {warrior.Damage} и HP {warrior.Health}");
+        Console.WriteLine("Нажмите enter чтобы продолжить...");
+        Console.ReadLine();
+
+        int round = 1;
+
+        while(warrior.Health > 0 && monster.Health > 0)
         {
-            return false;
-        }
-        if (result < 0)
-        {
-            return false;
-        }
-        if (type == null)
-        {
-            return false;
-        }
-        List<FuelType> needcolonka = GasStation.Where(c => type == c.Fueltype).ToList();
-        foreach(FuelType lox in needcolonka)
-        {
-            if(!lox.Work)
+            Console.Clear();
+            Console.WriteLine($"Раунд номер {round} начинается");
+            Console.WriteLine($"{warrior.Name}: {warrior.Health} HP | {monster.Name}: {monster.Health} HP");
+
+
+            warrior.Attack(monster);
+
+            if (monster.Health <= 0)
             {
-                return false;
+                Console.WriteLine($"монстер {monster.Name} пал");
+                Console.WriteLine($"Победил {warrior.Name}");
+                break;
             }
-            if(lox._fuelAvailable < result)
+            Console.WriteLine();
+
+            if (warrior.Health <= 0)
             {
-                return false;
+                Console.WriteLine($"воин {warrior.Name} пал");
+                Console.WriteLine($"победил {monster.Name}");
+                break;
             }
-            else
-            {
-                lox._fuelAvailable = lox._fuelAvailable - result;
-            }
-        }
-        Console.ReadKey();
-        return true;
-    }
 
-    public void ConditionLox()
-    {
-        List<FuelType> Condition = GasStation.Where(c => c._fuelAvailable > 0).ToList();
+            round++;
 
-        foreach(FuelType state in Condition)
-        {
-            string? condition = null;
-            if (state.Work)
-            {
-                condition = "работает";
-            }
-            else
-            {
-                condition = "не работает";
-            }
-            Console.WriteLine($"В {state.Number} колонке {state._fuelAvailable} литров {state.Fueltype} и она {condition}");
-        }
-        Console.ReadKey();
-    }
-}
-class Programm 
-{
-    static void Main (string[] args)
-    {
-        GasStationManager manager = new GasStationManager();
-
-        while(true)
-        {
-            Console.WriteLine(" - Бензоколонки - ");
-            Console.WriteLine(" 1 - Заправка машины - ");
-            Console.WriteLine(" 2 - Увидеть количество топлива в колонке и его вид - ");
-            Console.WriteLine(" 3 - Выход с программы - ");
-            Console.WriteLine(" - Выберите действие - ");
-
-            string? op = Console.ReadLine();
-
-            switch (op)
-            {
-                case "1":
-                Console.WriteLine("Заправка");
-                Console.WriteLine("Введите вид топлива который хотите заправить : 92, 95, 100, ДТ, Электро");
-                string? typ = Console.ReadLine();
-                Console.WriteLine("Введите сколько нужно заправить");
-                string? litrs = Console.ReadLine();
-                if (!manager.DispanceFuel(litrs, typ))
-                {
-                    Console.WriteLine("Ошибка");
-                }
-                else
-                {
-                    Console.WriteLine("Заправка окончена");
-                }
-                Console.ReadKey();
-                continue;
-
-                case "2":
-                Console.WriteLine("Все ввиды топлива:");
-                manager.ConditionLox();
-                Console.ReadKey();
-                continue;
-
-                case "3":
-                Console.WriteLine("Выход с программы");
-                Console.ReadKey();
-                return;
-
-                default:
-                Console.WriteLine("Ошибка действие некорректно");
-                Console.ReadKey();
-                continue;
-            }
+            Console.WriteLine("\n Нажмите Enter чтобы продолжить . . .");
+            Console.ReadKey();
         }
     }
 }
