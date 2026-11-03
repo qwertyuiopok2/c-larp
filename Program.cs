@@ -7,137 +7,130 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks.Dataflow;
 namespace c_larp;
-
-public class Hero
+public class Bee
 {
-    public string? Name { get; private set; } 
-    public int Health { get ; private set; }
-    public int Damage { get; private set; }
+    public string? Name {get;  set;}
+    public string? Role {get;  set;}
+    public int Energy {get;  set;}
+    public int CollectHoneyPerOneDay {get;  set;}
 
-    public Hero (string? name, int health, int damage)
+    public Bee(string? name, string? role, int energy, int collecthoneyperoneday)
     {
         Name = name;
-        Health = health;
-        Damage = damage;
-    }
-
-    public void TakeDamage(int damage)
-    {
-        Health -= damage;
-        if (Health < 0)
-        {
-            Health = 0;
-        }
-
-        Console.WriteLine($"{Name} получил {damage} едениц урона текущие хп {Health}");
-    }
-    public void Attack(Hero target)
-    {
-        Console.WriteLine($"{Name} замахивается мечом на {target.Name}");
-
-        target.TakeDamage(Damage);
+        Role = role;
+        Energy = energy;
+        CollectHoneyPerOneDay = collecthoneyperoneday;
     }
 }
-class Program
+public class BeeHive
+{
+    public int Id {get; set;}
+    public string? Material {get; set;}
+    public List<Bee> Bees {get; set;} //Матрешка!, список пчел внутри улья
+
+    public BeeHive(int id, string? material, List<Bee> bees)
+    {
+        Id = id;
+        Material = material;
+        Bees = bees;
+    }
+}
+public class ApiaryManager
+{
+    public List<BeeHive> Hivelist = new List<BeeHive>()
+    {
+        new BeeHive (1, "Дерево", new List<Bee>
+        {
+            new Bee ("Rage Bee", "Guard", 75, 25),
+            new Bee ("Cool Bee", "Worker", 15, 75),
+            new Bee ("Wasp Killer", "Attacker-Guard", 10, 0),
+            new Bee ("Clown Bee", "Worker", 75, 25),
+            new Bee ("Queen Bee", "Queen", 75, 0),
+        }),
+        new BeeHive(2, "Пластик", new List<Bee>
+        {
+            new Bee ("Smart Bee", "Worker", 80, 45),
+            new Bee ("Big Bee", "Queen", 75, 0),
+            new Bee ("Miner Bee", "Worker", 15, 75),
+            new Bee ("Agressiv Bee", "Attacker-Guard", 100, 0),
+            new Bee ("Danger Bee", "Guard", 18, 55),
+        }),
+        new BeeHive (3, "Дерево", new List<Bee>
+        {
+            new Bee ("Worker Bee", "Worker", 45, 65),
+            new Bee ("Money Bee", "Guard", 95, 75),
+            new Bee ("Stari Bog", "Queen", 75, 0),
+            new Bee ("Fat Bee", "Worker", 10, 95),
+            new Bee ("Strong Bee", "Attacker-Guard", 14, 0),
+        })
+    } ;
+
+    public void Champion()
+    {
+        Console.WriteLine("Поиск самого продуктивного улья");
+        BeeHive? champion = Hivelist.OrderByDescending(Bees => Bees.Bees.Sum(bee => bee.CollectHoneyPerOneDay)).FirstOrDefault();
+
+        if (champion == null)
+        {
+            Console.WriteLine("На пасике нет ульев");
+            return;
+        }
+        int totalHoney = champion.Bees.Sum(b => b.CollectHoneyPerOneDay);
+
+        Console.WriteLine($"Champion Gladiator: {champion.Id} || {champion.Material}");
+        Console.WriteLine($"Они всего собрали {totalHoney}");
+    } 
+}
+public class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Добро пожаловать на кровавую арену смерти");
-
-
-
-        List<Hero> Heroes = new List<Hero>()
+        ApiaryManager hive = new ApiaryManager();
+        List <Bee> TiredBee = hive.Hivelist.SelectMany(h => h.Bees).Where(bee => bee.Energy <= 20).ToList();
+        var AllHoney = hive.Hivelist.SelectMany(h => h.Bees).Where(bee => bee.Role == "Worker").Sum(honey => honey.CollectHoneyPerOneDay);
+        
+        while(true)
         {
-            new Hero("ЭлектроГигант", 1000, 45),
-            new Hero("Гигант", 750, 25 ),
-            new Hero("Гоблин", 300, 80)
-        };
+        Console.WriteLine("Добро пожаловать в Пасику");
+        Console.WriteLine("- 1 Найти и покормить уставших пчел - ");
+        Console.WriteLine("- 2 Сколько всего приносит улей в день - ");
+        Console.WriteLine("- 3 Самый продуктивный улей - ");
+        Console.WriteLine("- 4 Выйти с Пасики -");
+        Console.WriteLine("- Выберите действие - ");
+        string? command = Console.ReadLine();
 
-        List<Hero> Villains = new List<Hero>()
+        switch(command)
         {
-            new Hero("Зёлёнкий", 1000000, 125),
-            new Hero("Золочевски", 100, 10),
-            new Hero("Лох", 300, 25)
-        };
-
-        int round = 1;
-
-        while(Heroes.Any(c => c.Health > 0) && Villains.Any(c => c.Health > 0))
-        {
-            Console.Clear();
-            Console.WriteLine($"раунд - {round} начинается ");
-            
-
-
-            int totalHeroesHp = Heroes.Sum(c => c.Health);
-            int totalVilianceHp = Villains.Sum(c => c.Health);
-
-            Console.WriteLine($"Общее здоровье героев {totalHeroesHp} HP ");
-            Console.WriteLine($" Общее здоровье злодеев {totalVilianceHp} HP");
-
-            Console.WriteLine("Очередь героев");
-            foreach (var HEROES in Heroes)
+        case "1":
+            foreach (Bee tired in TiredBee)
             {
-                if (HEROES.Health <= 0)
-                {
-                    Console.WriteLine($"{HEROES.Name} мертв");
-                    continue;
-                }
-
-                Hero weakestMonster = Villains.Where(c => c.Health > 0).OrderBy(c => c.Health).FirstOrDefault();
-
-                if (weakestMonster != null)
-                {
-                    HEROES.Attack(weakestMonster);
-                }
-
-                if (!Villains.Any(Villains => Villains.Health > 0))
-                {
-                    break;
-                }
-
-                Console.WriteLine($"\nНажмите Enter чтобы монстры ответили своим ударом...");
+                Console.WriteLine($"{tired.Name} с ролью {tired.Role} требует подпитки у неё {tired.Energy} энергии");
+                Console.WriteLine("Для подпитка бжел нажмите Enter");
                 Console.ReadKey();
-            }
-            Console.WriteLine("Ход монстров");
-            foreach(var VILLAINCE in Villains)
-            {
-                if (VILLAINCE.Health <= 0)
-                {
-                    Console.WriteLine($"{VILLAINCE.Name } мертв");
-                    continue;
-                }
-
-                Hero weakestHero = Heroes.Where(c => c.Health > 0).OrderBy(c => c.Health).FirstOrDefault();
-
-                if (weakestHero != null)
-                {
-                    VILLAINCE.Attack(weakestHero);
-                }
-
-                if (!Heroes.Any(c => c.Health > 0))
-                {
-                    break;
-                }
-                round ++;
-                Console.WriteLine("Нажмите Enter чтобы продолжить бой");
-                Console.ReadKey();
-            }
-            Console.WriteLine("БОЙ ОКОНЧЕН");
-
-        }
-            if (Heroes.Any(Hp => Hp.Health > 0))
-            {
-                Console.WriteLine("ГЕРОИ ПОБЕДИЛИ УРА УРА УВА");
-            }
-            else
-            {
-                Console.WriteLine("МОНСТРЫ ПОБЕДИЛИ НЕ УРА НЕ УРА НЕ УВА");
+                Console.WriteLine($"Вы покормили пчелку {tired.Name} у нее прибавилось 25 энергии");
+                tired.Energy += 25;
             }
             Console.ReadKey();
-    }
+            break;
+
+        case "2":
+            Console.WriteLine($"За день ваши пчелы собирают {AllHoney} грамм");
+            Console.ReadKey();
+            break;
+        case "3":
+            hive.Champion();
+            Console.ReadKey();
+            break;
+        case "4":
+            Console.ReadKey();
+            return;
+        }
+        }
+        }
 }
+
